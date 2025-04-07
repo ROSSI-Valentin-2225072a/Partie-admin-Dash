@@ -47,6 +47,7 @@ export default defineConfig({
       "r59cdq-3000.csb.app",
       "56349n-3001.csb.app",
       "56349n-3000.csb.app",
+      "zv4j8v-3000.csb.app",
     ], // Ajoutez l'hôte ici
     port: 3000,
   },

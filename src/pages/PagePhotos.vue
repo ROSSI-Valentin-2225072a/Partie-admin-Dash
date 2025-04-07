@@ -220,6 +220,7 @@ onMounted(async () => {
     const response = await fetch("https://dashboardisis.alwaysdata.net/api/v1/dashboard/photo");
     const data = await response.json();
     photos.value = data;
+    console.log
   } catch (error) {
     console.error("Erreur lors du chargement des photos :", error);
     photos.value = ajouterPhotosVides();

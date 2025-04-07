@@ -60,6 +60,16 @@
             ></v-text-field>
 
             <v-text-field
+              label="Prénom de la personne"
+              v-model="nouveauPrenom"
+              :rules="nomRules"
+              prepend-icon="mdi-account"
+              variant="outlined"
+              required
+              class="input-field"
+            ></v-text-field>
+
+            <v-text-field
               class="date-field input-field"
               label="Date"
               v-model="nouvelleDate"
@@ -99,6 +109,8 @@ const ajouterAnniversaire = ref(false)
 const modifierAnniversaire = ref(false)
 const indexModifier = ref(null)
 const nouveauNom = ref("")
+const nouveauPrenom = ref("")
+
 const nouvelleDate = ref("")
 const hoveredTrash = ref(null)
 
@@ -137,8 +149,8 @@ function ajouter() {
   if (formValide.value) {
     const [year, month, day] = nouvelleDate.value.split('-')
     const requestBody = {
-      firstName: nouveauNom.value.split(' ')[0] || nouveauNom.value,
-      lastName: nouveauNom.value.split(' ').slice(1).join(' ') || '',
+      firstName: nouveauNom.value,
+      lastName: nouveauPrenom.value,
       birthday: `${year}-${month}-${day}`
     }
 
@@ -156,28 +168,30 @@ function ajouter() {
 function modifier(index) {
   indexModifier.value = index
   const personne = anniversaires.value[index]
-  nouveauNom.value = `${personne.firstName} ${personne.lastName}`.trim()
+  
+  nouveauNom.value = personne.firstName
+  nouveauPrenom.value = personne.lastName
   nouvelleDate.value = personne.birthday
   modifierAnniversaire.value = true
   ajouterAnniversaire.value = false
 }
 
 function modifierConfirm() {
+  const personne = anniversaires.value[indexModifier.value]
+
   formRef.value?.validate()
   if (formValide.value) {
-    const personne = anniversaires.value[indexModifier.value]
     const [year, month, day] = nouvelleDate.value.split('-')
-    const body = {
-      id: personne.id,
-      firstName: nouveauNom.value.split(' ')[0] || nouveauNom.value,
-      lastName: nouveauNom.value.split(' ').slice(1).join(' ') || '',
+    const requestBody = {
+      firstName: nouveauNom.value,
+      lastName: nouveauPrenom.value,
       birthday: `${year}-${month}-${day}`
     }
 
     fetch(`${url}/id=${personne.personId}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body)
+      body: JSON.stringify(requestBody)
     }).then(() => {
       getAllPersons()
       resetForm()
