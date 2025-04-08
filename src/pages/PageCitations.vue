@@ -68,7 +68,6 @@
                 dense
                 hide-details
                 class="flex-grow-1 mr-2"
-                @blur="confirmerEdition"
                 @keyup.enter="confirmerEdition"
                 @keyup.esc="annulerEdition"
                 ref="editField"
@@ -213,13 +212,14 @@ const citationsFiltrees = computed(() => {
 });
 
 const getIndexReel = (index) => {
-  return citations.value.indexOf(citationsFiltrees.value[index]);
+  return index
 };
 
 // Obtenir l'ID de la citation pour les appels API
 const getCitationId = (index) => {
-  const realIndex = getIndexReel(index);
-  return citationsData.value[realIndex]?.id || realIndex;
+  const realIndex = getIndexReel(index)
+  const citationId = citationsData.value[realIndex].quoteId
+  return citationId
 };
 
 const ajouterCitation = async () => {
@@ -233,7 +233,7 @@ const ajouterCitation = async () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ content: nouvelleCitation.value.trim() }),
+        body:  nouvelleCitation.value.trim(),
       });
 
       if (response.ok) {
@@ -279,7 +279,7 @@ const supprimerCitation = async (index) => {
           const citationId = getCitationId(index);
 
           // Supprimer de l'API
-          const response = await fetch(`${apiUrl}/${citationId}`, {
+          const response = await fetch(`${apiUrl}/id=${citationId}`, {
             method: "DELETE",
           });
 
@@ -336,13 +336,6 @@ const activerEdition = (index) => {
   const citationReelle = getIndexReel(index);
   editionIndex.value = citationReelle;
   citationEditee.value = citations.value[citationReelle];
-
-  // Focus sur le champ d'édition après le rendu
-  nextTick(() => {
-    if (editField.value) {
-      editField.value.focus();
-    }
-  });
 };
 
 const confirmerEdition = () => {
@@ -363,17 +356,15 @@ const validerEdition = async () => {
     try {
       errorMessage.value = ""; // Réinitialiser le message d'erreur
 
-      // Récupérer l'ID de la citation
-      const citationId =
-        citationsData.value[editionIndex.value]?.id || editionIndex.value;
+      const citationId = getCitationId(editionIndex.value)
 
       // Mettre à jour dans l'API
-      const response = await fetch(`${apiUrl}/${citationId}`, {
+      const response = await fetch(`${apiUrl}/id=${citationId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ content: citationEditee.value.trim() }),
+        body: citationEditee.value,
       });
 
       if (response.ok) {
