@@ -148,6 +148,7 @@
 
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue';
+import { saveAs } from 'file-saver';
 
 // Variables et état
 const mode = ref('manuel');
@@ -191,7 +192,7 @@ const fermerDialogPhoto = () => {
   dialogPhoto.value = false;
 };
 
-const validerAjoutPhoto = () => {
+const validerAjoutPhoto = async() => {
   // Valider le formulaire. Si la validation échoue, les messages d'erreur s'affichent.
   if (!form.value.validate()) {
     return;
@@ -199,14 +200,47 @@ const validerAjoutPhoto = () => {
   
   console.log('Nouvelle photo sélectionnée :', nouvellePhoto.value.fichier);
   console.log('Description :', nouvellePhoto.value.description);
-  
-  // Ici vous pouvez gérer l'envoi à votre API ou autre traitement
 
-  fermerDialogPhoto();
+  const newUrl = "/images/" + nouvellePhoto.value.fichier.name
+
+  try{
+    
+    const fichierImage = nouvellePhoto.value.fichier;
+
+    const imageURL = URL.createObjectURL(fichierImage);
+    const lien = document.createElement('a');
+    lien.href = imageURL;
+    lien.download = fichierImage.name;
+    document.body.appendChild(lien);
+    lien.click();
+    document.body.removeChild(lien);
+    URL.revokeObjectURL(imageURL);
+
+
+    const requestBody = {
+      photoUrl: newUrl,
+      description: nouvellePhoto.value.description
+    }
+
+        // Ajouter à l'API
+        const response = await fetch(url, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(requestBody)
+        }).then(() => {
+          chargerPhoto();
+        }).catch(err => console.error("Erreur ajout:", err));
+
+    fermerDialogPhoto();
+    } catch (err) {
+    console.error("Erreur ajout:", err);
+  }
 };
 
 const filtrerPhotos = computed(() => {
-  if (!recherche.value.trim()) return photos.value;
+  if (!recherche.value) return photos.value;
   const termeLowerCase = recherche.value.toLowerCase().trim();
   return photos.value.filter(photo =>
     photo.description.toLowerCase().includes(termeLowerCase)

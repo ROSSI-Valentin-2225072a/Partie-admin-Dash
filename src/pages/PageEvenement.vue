@@ -1,15 +1,30 @@
 <template>
   <div class="page-evenement">
+    <div class="events-sidebar">
+      <button class="add-event-btn" @click="showAddForm = true">
+        <span class="plus-icon">+</span>
+        <span>Ajouter un événement</span>
+      </button>
 
-    <v-btn class="add-event-btn">
+      <v-card class="filters-card">
+        <h3>Filtres</h3>
+        <label>Type d'événement</label>
+          <div class="filter-options">
+            <button
+              v-for="type in tags"
+              :key="type.libelle"
+              class="filter-chip"
+              :class="{ active: activeFilters.includes(type.libelle) }"
+              @click="toggleFilter(type.libelle)">
+              <span class="filter-dot" :class="`dot-${type.tag}`"></span>
+              {{ type.libelle }}
+            </button>
+          </div>
+      </v-card>
+      <v-card class="calendar-preview">
 
-    </v-btn>
-    <v-card class="filters-card">
-
-    </v-card>
-    <v-card class="calendar-preview">
-
-    </v-card>
+      </v-card>
+    </div>
 
     <div class="events-main">
 
@@ -25,20 +40,64 @@
   </div>
 </template>
 
-<script>
-import { ref } from "vue";
+<script setup>
+import { ref, onMounted } from "vue";
 
 const showAddForm = ref(false)
+const events = ref([])
+const eventTypes = ref([])
+const activeFilters = ref([])
+const tags = ref([])
+const recherche = ref('')
+const url = "https://dashboardisis.alwaysdata.net/api/v1/dashboard/event"
 
+const chargerEventTypes = async() => {
+  try {
+    const response = await fetch(url);
+    const data = await response.json();
+    events.value = data;
+    const typeList = data.map(
+        (item) => item.type
+      );
+    eventTypes.value = [...new Set(typeList)]
+
+    tags.value = eventTypes.value.map(event => {
+      const tag = event.libelle.split(" ")[0]
+      .toLowerCase()
+      .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // Supprime les accents
+      return { 
+        libelle : event.libelle, 
+        tag : tag
+      }
+    }
+  )
+
+    console.log(events.value);
+    console.log(eventTypes.value);
+    console.log(tags.value)
+
+  } catch (error) {
+    console.error('Erreur lors du chargement des evenements :', error);
+  }
+}
+
+function toggleFilter(type) {
+  const index = this.activeFilters.indexOf(type);
+  if (index === -1) {
+    this.activeFilters.push(type);
+  } else {
+    this.activeFilters.splice(index, 1);
+  }
+}
+
+onMounted(() => {
+  chargerEventTypes()
+})
 </script>
 
 <style scoped>
 .page-evenement {
   min-height: 100vh;
-  width: 100%;
-}
-
-.content-container {
   width: 100%;
   margin: 0 auto;
   padding: 20px;
@@ -102,11 +161,7 @@ const showAddForm = ref(false)
   font-weight: 600;
 }
 
-.filter-group {
-  margin-bottom: 15px;
-}
-
-.filter-group label {
+.filter-card label {
   display: block;
   margin-bottom: 8px;
   font-weight: 500;
@@ -426,7 +481,7 @@ const showAddForm = ref(false)
   background-color: #2196f3;
 }
 
-.dot-conference {
+.dot-conférence {
   background-color: #ff9800;
 }
 
@@ -434,7 +489,7 @@ const showAddForm = ref(false)
   background-color: #4caf50;
 }
 
-.dot-pedagogique {
+.dot-pédagogique {
   background-color: #e91e63;
 }
 
