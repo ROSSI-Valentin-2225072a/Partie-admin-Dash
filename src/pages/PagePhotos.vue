@@ -14,10 +14,7 @@
       </v-radio-group>
 
       <div class="mode-info">
-        <v-icon
-          :color="mode === 'manuel' ? '#9059a0' : '#888'"
-          class="mode-icon"
-        >
+        <v-icon :color="mode === 'manuel' ? '#9059a0' : '#888'" class="mode-icon">
           {{ mode === "manuel" ? "mdi-hand" : "mdi-robot" }}
         </v-icon>
         <p class="mode-description">
@@ -35,7 +32,7 @@
       <div class="top-bar">
         <v-btn
           class="upload-btn"
-          @click="ajouterPhoto"
+          @click="ouvrirDialogPhoto"
           :disabled="mode === 'auto'"
           elevation="1"
           :color="mode === 'manuel' ? '#9059a0' : 'grey'"
@@ -44,19 +41,18 @@
           <span class="upload-text">Ajouter</span>
         </v-btn>
 
-
         <v-text-field
-        v-model="recherche"
-        label="Rechercher une image"
-        prepend-icon="mdi-magnify"
-        class="photo-search"
-        clearable
-        hide-details
-        outlined
-        dense
-        :disabled="mode === 'auto'"
-        :class="{ 'disabled-field': mode === 'auto' }"
-      ></v-text-field>
+          v-model="recherche"
+          label="Rechercher une image"
+          prepend-icon="mdi-magnify"
+          class="photo-search"
+          clearable
+          hide-details
+          outlined
+          dense
+          :disabled="mode === 'auto'"
+          :class="{ 'disabled-field': mode === 'auto' }"
+        ></v-text-field>
 
         <v-select
           v-if="mode === 'manuel'"
@@ -92,99 +88,157 @@
             <v-card
               :class="[
                 'photo-card',
-                {
-                  selected: mode === 'manuel' && photoJourIndex === index,
-                  locked: mode === 'auto',
-                },
+                { selected: mode === 'manuel' && photoJourIndex === index, locked: mode === 'auto' }
               ]"
               @click="mode === 'manuel' && selectPhoto(index)"
               :style="{ cursor: mode === 'auto' ? 'not-allowed' : 'pointer' }"
               elevation="2"
             >
-              <img class="image" :src="photo.photoUrl">
-              </img>
+              <img class="image" :src="photo.photoUrl" alt="Photo" />
+              <v-card-subtitle class="photo-caption">
+                {{ photo.photoUrl.split('/').pop() }}
+              </v-card-subtitle>
 
-              <v-card-subtitle class="photo-caption">{{ photo.photoUrl.split('/').pop() }}</v-card-subtitle>
-
-              <div
-                v-if="mode === 'manuel' && photoJourIndex === index"
-                class="selected-badge"
-              >
+              <div v-if="mode === 'manuel' && photoJourIndex === index" class="selected-badge">
                 <v-icon color="white" size="small">mdi-star</v-icon>
                 <span>Photo du jour</span>
               </div>
 
               <div v-if="mode === 'auto'" class="lock-overlay">
-                <v-icon class="lock-icon" color="white" size="24px"
-                  >mdi-lock</v-icon
-                >
+                <v-icon class="lock-icon" color="white" size="24px">mdi-lock</v-icon>
               </div>
             </v-card>
           </v-col>
         </v-row>
       </div>
     </v-card>
+
+    <!-- Pop-up pour ajouter une nouvelle photo avec validation -->
+    <v-dialog v-model="dialogPhoto" persistent max-width="500px" transition="dialog-bottom-transition">
+      <v-card class="dialog-card">
+        <v-card-title class="dialog-header">Ajouter une photo</v-card-title>
+        <v-card-text class="dialog-content">
+          <v-form ref="form">
+            <v-file-input
+              v-model="nouvellePhoto.fichier"
+              label="Choisir une image"
+              accept="image/*"
+              prepend-icon="mdi-image"
+              :rules="[rules.required]"
+              class="dialog-input"
+            ></v-file-input>
+            <v-text-field
+              v-model="nouvellePhoto.description"
+              label="Description de la photo"
+              prepend-icon="mdi-text"
+              :rules="[rules.requiredDescription]"
+              class="dialog-input"
+            ></v-text-field>
+          </v-form>
+        </v-card-text>
+        <v-card-actions class="dialog-actions">
+          <v-spacer></v-spacer>
+          <v-btn text color="red" @click="fermerDialogPhoto">Annuler</v-btn>
+          <v-btn text color="green" @click="validerAjoutPhoto">Valider</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch } from "vue";
+import { ref, computed, onMounted, watch } from 'vue';
 
 // Variables et état
-const mode = ref("manuel");
+const mode = ref('manuel');
 const photoJourIndex = ref(null);
 const photos = ref([]);
-const recherche = ref("");
-const url = "https://dashboardisis.alwaysdata.net/api/v1/dashboard/photo"
+const recherche = ref('');
+const dialogPhoto = ref(false); // Contrôle la visibilité du dialog
+const nouvellePhoto = ref({
+  fichier: null,
+  description: ''
+});
+const form = ref(null);
 
-const chargerPhoto = async() => {
-  const response = await fetch(url);
-  const data = await response.json();
-  photos.value = data;
-  console.log(photos.value)
-}
+// Règles de validation
+const rules = {
+  required: value => !!value || 'Veuillez remplir ce champ',
+  // Pour le champ description, on accepte uniquement s'il y a au moins un caractère non-espace
+  requiredDescription: value => (value && value.trim().length > 0) || 'Veuillez remplir ce champ'
+};
 
-const ajouterPhoto = () => {
-  alert("Fonction à implémenter : ajouter une photo");
+const url = 'https://dashboardisis.alwaysdata.net/api/v1/dashboard/photo';
+
+const chargerPhoto = async () => {
+  try {
+    const response = await fetch(url);
+    const data = await response.json();
+    photos.value = data;
+    console.log(photos.value);
+  } catch (error) {
+    console.error('Erreur lors du chargement des photos :', error);
+  }
+};
+
+const ouvrirDialogPhoto = () => {
+  dialogPhoto.value = true;
+};
+
+const fermerDialogPhoto = () => {
+  nouvellePhoto.value.fichier = null;
+  nouvellePhoto.value.description = '';
+  dialogPhoto.value = false;
+};
+
+const validerAjoutPhoto = () => {
+  // Valider le formulaire. Si la validation échoue, les messages d'erreur s'affichent.
+  if (!form.value.validate()) {
+    return;
+  }
+  
+  console.log('Nouvelle photo sélectionnée :', nouvellePhoto.value.fichier);
+  console.log('Description :', nouvellePhoto.value.description);
+  
+  // Ici vous pouvez gérer l'envoi à votre API ou autre traitement
+
+  fermerDialogPhoto();
 };
 
 const filtrerPhotos = computed(() => {
   if (!recherche.value.trim()) return photos.value;
   const termeLowerCase = recherche.value.toLowerCase().trim();
-  
-  return photos.value.filter((photo) =>
+  return photos.value.filter(photo =>
     photo.description.toLowerCase().includes(termeLowerCase)
   );
 });
 
-const photoSelectionItems = computed(() => {
-  return photos.value.map((photo, index) => ({
-    titre: photo.photoUrl.split("/").pop(),
-    index: index,
-  }));
-});
+const photoSelectionItems = computed(() =>
+  photos.value.map((photo, index) => ({
+    titre: photo.photoUrl.split('/').pop(),
+    index: index
+  }))
+);
 
 const selectPhoto = (index) => {
-  if (mode.value !== "manuel") return;
+  if (mode.value !== 'manuel') return;
   const photo = filtrerPhotos.value[index];
-  const realIndex = photos.value.findIndex((p) => p.photoUrl.split("/").pop() === photo.photoUrl.split("/").pop());
-  if (photoJourIndex.value === realIndex) {
-    photoJourIndex.value = null;
-  } else {
-    photoJourIndex.value = realIndex;
-  }
+  const realIndex = photos.value.findIndex(
+    p => p.photoUrl.split('/').pop() === photo.photoUrl.split('/').pop()
+  );
+  photoJourIndex.value = photoJourIndex.value === realIndex ? null : realIndex;
 };
 
-const handleModeChange = (newMode) => {
-  if (newMode === "auto") {
+const handleModeChange = newMode => {
+  if (newMode === 'auto') {
     photoJourIndex.value = null;
   }
 };
 
 watch(
   mode,
-  (newMode) => {
-    if (newMode === "auto") {
+  newMode => {
+    if (newMode === 'auto') {
       photoJourIndex.value = null;
     }
   },
@@ -193,13 +247,7 @@ watch(
 
 // Charger les photos depuis l'API
 onMounted(async () => {
-  try {
-    chargerPhoto();
-    console.log
-  } catch (error) {
-    console.error("Erreur lors du chargement des photos :", error);
-    photos.value = ajouterPhotosVides();
-  }
+  await chargerPhoto();
 });
 </script>
 
@@ -213,6 +261,7 @@ onMounted(async () => {
   min-height: 100vh;
 }
 
+/* Styles existants */
 .photo-mode {
   background-color: white;
   border-radius: 16px;
@@ -221,11 +270,9 @@ onMounted(async () => {
   border-left: 4px solid #9059a0;
   transition: box-shadow 0.3s ease;
 }
-
 .photo-mode:hover {
   box-shadow: 0 8px 16px rgba(144, 89, 160, 0.15) !important;
 }
-
 .mode-title {
   color: #9059a0;
   font-size: 1.3rem;
@@ -234,11 +281,9 @@ onMounted(async () => {
   padding-bottom: 10px;
   border-bottom: 2px solid #f0e6f5;
 }
-
 .mode-selection {
   margin-bottom: 20px;
 }
-
 .mode-info {
   display: flex;
   align-items: center;
@@ -248,17 +293,16 @@ onMounted(async () => {
   background-color: #f8f5fc;
   border-radius: 8px;
 }
-
 .mode-icon {
   font-size: 28px;
 }
-
 .mode-description {
   font-size: 0.9rem;
   color: #555;
   margin: 0;
 }
 
+/* Panneau photo */
 .photo-panel {
   background-color: white;
   border-radius: 16px;
@@ -268,11 +312,9 @@ onMounted(async () => {
   border-left: 4px solid #9059a0;
   transition: box-shadow 0.3s ease;
 }
-
 .photo-panel:hover {
   box-shadow: 0 8px 16px rgba(144, 89, 160, 0.15) !important;
 }
-
 .top-bar {
   display: flex;
   flex-wrap: wrap;
@@ -280,7 +322,6 @@ onMounted(async () => {
   margin-bottom: 24px;
   align-items: center;
 }
-
 .upload-btn {
   border-radius: 8px;
   height: 42px;
@@ -291,33 +332,27 @@ onMounted(async () => {
   transition: transform 0.2s ease, background-color 0.2s ease;
   font-weight: 500;
 }
-
 .upload-btn:not(:disabled):hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(144, 89, 160, 0.2) !important;
 }
-
 .upload-text {
   margin-left: 6px;
   font-size: 0.9rem;
 }
-
 .photo-select {
   min-width: 260px;
   flex-grow: 1;
 }
-
 .photo-search {
   max-width: 280px;
   flex-grow: 1;
 }
-
 .gallery-container {
   flex-grow: 1;
   display: flex;
   flex-direction: column;
 }
-
 .gallery-title {
   color: #333;
   font-size: 1.2rem;
@@ -326,18 +361,15 @@ onMounted(async () => {
   padding-bottom: 12px;
   border-bottom: 2px solid #f0e6f5;
 }
-
 .counter {
   font-size: 0.9rem;
   color: #666;
   font-weight: 400;
 }
-
 .photo-grid {
   flex-grow: 1;
   overflow-y: auto;
 }
-
 .photo-card {
   border-radius: 12px;
   transition: all 0.3s ease;
@@ -347,21 +379,17 @@ onMounted(async () => {
   flex-direction: column;
   overflow: hidden;
 }
-
 .photo-card:not(.locked):hover {
   transform: translateY(-5px);
   box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1) !important;
 }
-
 .photo-card.selected {
   border: 2px solid #9059a0;
   box-shadow: 0 6px 20px rgba(144, 89, 160, 0.35) !important;
 }
-
 .photo-card.locked {
   opacity: 0.85;
 }
-
 .photo-caption {
   font-size: 0.9rem;
   text-align: center;
@@ -371,26 +399,11 @@ onMounted(async () => {
   border-top: 1px solid #eee;
   margin: 0;
 }
-
-.photo-description {
-  font-size: 0.75rem;
-  color: #666;
-  text-align: center;
-  padding: 0 8px 10px;
-  word-break: break-word;
-}
-
 .image {
-  width: 15;
-  height: 15;
-  justify-content: center;
-  align-items: center;
+  width: 100%;
+  height: 130px;
+  object-fit: cover;
 }
-
-.placeholder-icon {
-  font-size: 40px;
-}
-
 .lock-overlay {
   position: absolute;
   top: 0;
@@ -403,11 +416,9 @@ onMounted(async () => {
   align-items: center;
   pointer-events: none;
 }
-
 .lock-icon {
   filter: drop-shadow(0 0 3px rgba(0, 0, 0, 0.5));
 }
-
 .selected-badge {
   position: absolute;
   top: 10px;
@@ -423,24 +434,46 @@ onMounted(async () => {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
+/* Styles pour le dialog et sa validation */
+.dialog-card {
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+}
+.dialog-header {
+  background: linear-gradient(45deg, #9059a0, #c29bd4);
+  color: #fff;
+  font-size: 1.2rem;
+  font-weight: bold;
+  padding: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+}
+.dialog-content {
+  padding: 20px;
+}
+.dialog-input {
+  margin-bottom: 15px;
+}
+.dialog-actions {
+  padding: 8px 16px;
+}
+
+/* Responsive */
 @media (max-width: 960px) {
   .photos-page {
     grid-template-columns: 1fr;
     gap: 20px;
     padding: 15px;
   }
-
   .top-bar {
     flex-direction: column;
     align-items: stretch;
   }
-
   .photo-search,
   .photo-select {
     max-width: none;
     width: 100%;
   }
-
   .upload-btn {
     width: 100%;
   }
