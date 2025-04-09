@@ -212,7 +212,8 @@ const citationsFiltrees = computed(() => {
 });
 
 const getIndexReel = (index) => {
-  return index
+  console.log(citations.value.indexOf(citationsFiltrees.value[index]))
+  return citations.value.indexOf(citationsFiltrees.value[index]);
 };
 
 // Obtenir l'ID de la citation pour les appels API
@@ -352,6 +353,7 @@ const confirmerEdition = () => {
 };
 
 const validerEdition = async () => {
+  console.log('here')
   if (editionIndex.value !== null && citationEditee.value.trim()) {
     try {
       errorMessage.value = ""; // Réinitialiser le message d'erreur
@@ -366,7 +368,6 @@ const validerEdition = async () => {
         },
         body: citationEditee.value,
       });
-
       if (response.ok) {
         // Récupérer les données mises à jour
         await chargerCitations();

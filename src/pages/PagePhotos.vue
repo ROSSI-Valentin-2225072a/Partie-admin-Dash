@@ -139,6 +139,7 @@ const mode = ref("manuel");
 const photoJourIndex = ref(null);
 const photos = ref([]);
 const recherche = ref("");
+const url = "https://dashboardisis.alwaysdata.net/api/v1/dashboard/photo"
 
 // Ajouter des cadres vides si l'API échoue
 const ajouterPhotosVides = () => {
@@ -217,7 +218,7 @@ watch(
 // Charger les photos depuis l'API
 onMounted(async () => {
   try {
-    const response = await fetch("https://dashboardisis.alwaysdata.net/api/v1/dashboard/photo");
+    const response = await fetch(url);
     const data = await response.json();
     photos.value = data;
     console.log
