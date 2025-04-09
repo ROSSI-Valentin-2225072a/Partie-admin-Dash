@@ -44,19 +44,19 @@
           <span class="upload-text">Ajouter</span>
         </v-btn>
 
+
         <v-text-field
-          v-model="recherche"
-          density="compact"
-          hide-details
-          placeholder="Rechercher une image..."
-          prepend-inner-icon="mdi-magnify"
-          class="photo-search"
-          variant="outlined"
-          :disabled="mode === 'auto'"
-          @input="handleSearchChange"
-          bg-color="white"
-          :color="mode === 'manuel' ? '#9059a0' : 'grey'"
-        />
+        v-model="recherche"
+        label="Rechercher une image"
+        prepend-icon="mdi-magnify"
+        class="photo-search"
+        clearable
+        hide-details
+        outlined
+        dense
+        :disabled="mode === 'auto'"
+        :class="{ 'disabled-field': mode === 'auto' }"
+      ></v-text-field>
 
         <v-select
           v-if="mode === 'manuel'"
@@ -101,14 +101,10 @@
               :style="{ cursor: mode === 'auto' ? 'not-allowed' : 'pointer' }"
               elevation="2"
             >
-              <div class="empty-image-placeholder">
-                <v-icon class="placeholder-icon" color="#ddd"
-                  >mdi-image-outline</v-icon
-                >
-              </div>
+              <img class="image" :src="photo.photoUrl">
+              </img>
 
-              <v-card-subtitle class="photo-caption">{{ photo.titre }}</v-card-subtitle>
-              <v-card-text class="photo-description">{{ photo.description }}</v-card-text>
+              <v-card-subtitle class="photo-caption">{{ photo.photoUrl.split('/').pop() }}</v-card-subtitle>
 
               <div
                 v-if="mode === 'manuel' && photoJourIndex === index"
@@ -141,15 +137,12 @@ const photos = ref([]);
 const recherche = ref("");
 const url = "https://dashboardisis.alwaysdata.net/api/v1/dashboard/photo"
 
-// Ajouter des cadres vides si l'API échoue
-const ajouterPhotosVides = () => {
-  const photosVides = Array.from({ length: 12 }, (_, index) => ({
-    url: "",
-    titre: `Cadre ${index + 1}`,
-    description: "",
-  }));
-  return photosVides;
-};
+const chargerPhoto = async() => {
+  const response = await fetch(url);
+  const data = await response.json();
+  photos.value = data;
+  console.log(photos.value)
+}
 
 const ajouterPhoto = () => {
   alert("Fonction à implémenter : ajouter une photo");
@@ -157,8 +150,10 @@ const ajouterPhoto = () => {
 
 const filtrerPhotos = computed(() => {
   if (!recherche.value.trim()) return photos.value;
+  const termeLowerCase = recherche.value.toLowerCase().trim();
+  
   return photos.value.filter((photo) =>
-    photo.titre.toLowerCase().includes(recherche.value.toLowerCase())
+    photo.description.toLowerCase().includes(termeLowerCase)
   );
 });
 
@@ -167,25 +162,6 @@ const photoSelectionItems = computed(() => {
     titre: photo.titre,
     index: index,
   }));
-});
-
-const handleSearchChange = () => {
-  if (photoJourIndex.value !== null) {
-    const photoExisteDansFiltrage = filtrerPhotos.value.some((photo, i) => {
-      const originalIndex = photos.value.findIndex(
-        (p) => p.titre === photo.titre
-      );
-      return originalIndex === photoJourIndex.value;
-    });
-
-    if (!photoExisteDansFiltrage) {
-      photoJourIndex.value = null;
-    }
-  }
-};
-
-watch(recherche, () => {
-  handleSearchChange();
 });
 
 const selectPhoto = (index) => {
@@ -218,9 +194,7 @@ watch(
 // Charger les photos depuis l'API
 onMounted(async () => {
   try {
-    const response = await fetch(url);
-    const data = await response.json();
-    photos.value = data;
+    chargerPhoto();
     console.log
   } catch (error) {
     console.error("Erreur lors du chargement des photos :", error);
@@ -406,10 +380,9 @@ onMounted(async () => {
   word-break: break-word;
 }
 
-.empty-image-placeholder {
-  flex-grow: 1;
-  background-color: #f5f5f5;
-  display: flex;
+.image {
+  width: 15;
+  height: 15;
   justify-content: center;
   align-items: center;
 }
