@@ -159,7 +159,7 @@ const filtrerPhotos = computed(() => {
 
 const photoSelectionItems = computed(() => {
   return photos.value.map((photo, index) => ({
-    titre: photo.titre,
+    titre: photo.photoUrl.split("/").pop(),
     index: index,
   }));
 });
@@ -167,7 +167,7 @@ const photoSelectionItems = computed(() => {
 const selectPhoto = (index) => {
   if (mode.value !== "manuel") return;
   const photo = filtrerPhotos.value[index];
-  const realIndex = photos.value.findIndex((p) => p.titre === photo.titre);
+  const realIndex = photos.value.findIndex((p) => p.photoUrl.split("/").pop() === photo.photoUrl.split("/").pop());
   if (photoJourIndex.value === realIndex) {
     photoJourIndex.value = null;
   } else {
