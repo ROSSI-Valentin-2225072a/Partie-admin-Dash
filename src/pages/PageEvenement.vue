@@ -8,7 +8,7 @@
 
       <v-card class="filters-card">
         <h3>Filtres</h3>
-        <label>Type d'événement</label>
+        <h5>Type d'événement</h5>
           <div class="filter-options">
             <button
               v-for="type in tags"
@@ -20,11 +20,26 @@
               {{ type.libelle }}
             </button>
           </div>
-      </v-card>
-      <v-card class="calendar-preview">
 
+        <h5>Période</h5>
+        <div class="period-buttons">
+          <button
+            v-for="period in periodOptions"
+            :key="period.value"
+            :class="[
+              'period-btn',
+              { active: periodFilter === period.value },
+            ]"
+            @click="periodFilter = period.value">
+            {{ period.label }}
+          </button>
+        </div>
       </v-card>
     </div>
+
+    <v-card class="calendar-preview">
+      
+    </v-card>
 
     <div class="events-main">
 
@@ -50,6 +65,13 @@ const activeFilters = ref([])
 const tags = ref([])
 const recherche = ref('')
 const url = "https://dashboardisis.alwaysdata.net/api/v1/dashboard/event"
+const periodOptions = [
+        { value: "all", label: "Tous" },
+        { value: "upcoming", label: "À venir" },
+        { value: "past", label: "Passés" },
+        { value: "month", label: "Ce mois" },
+      ]
+const periodFilter = ref('all')
 
 const chargerEventTypes = async() => {
   try {

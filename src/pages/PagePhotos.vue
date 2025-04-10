@@ -94,9 +94,9 @@
               :style="{ cursor: mode === 'auto' ? 'not-allowed' : 'pointer' }"
               elevation="2"
             >
-              <img class="image" :src="photo.photoUrl" alt="Photo" />
+              <img class="image" :src="'data:image/jpeg;base64,' + photo.photoBase64" alt="Photo" />
               <v-card-subtitle class="photo-caption">
-                {{ photo.photoUrl.split('/').pop() }}
+                {{ photo.photoName }}
               </v-card-subtitle>
 
               <div v-if="mode === 'manuel' && photoJourIndex === index" class="selected-badge">
@@ -128,10 +128,17 @@
               class="dialog-input"
             ></v-file-input>
             <v-text-field
+              v-model="nouvellePhoto.photoName"
+              label="Nom de la photo"
+              prepend-icon="mdi-text"
+              :rules="[rules.requiredChamp]"
+              class="dialog-input"
+            ></v-text-field>
+            <v-text-field
               v-model="nouvellePhoto.description"
               label="Description de la photo"
               prepend-icon="mdi-text"
-              :rules="[rules.requiredDescription]"
+              :rules="[rules.requiredChamp]"
               class="dialog-input"
             ></v-text-field>
           </v-form>
@@ -148,7 +155,6 @@
 
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue';
-import { saveAs } from 'file-saver';
 
 // Variables et état
 const mode = ref('manuel');
@@ -158,6 +164,7 @@ const recherche = ref('');
 const dialogPhoto = ref(false); // Contrôle la visibilité du dialog
 const nouvellePhoto = ref({
   fichier: null,
+  photoName: '',
   description: ''
 });
 const form = ref(null);
@@ -166,7 +173,7 @@ const form = ref(null);
 const rules = {
   required: value => !!value || 'Veuillez remplir ce champ',
   // Pour le champ description, on accepte uniquement s'il y a au moins un caractère non-espace
-  requiredDescription: value => (value && value.trim().length > 0) || 'Veuillez remplir ce champ'
+  requiredChamp: value => (value && value.trim().length > 0) || 'Veuillez remplir ce champ'
 };
 
 const url = 'https://dashboardisis.alwaysdata.net/api/v1/dashboard/photo';
@@ -189,56 +196,69 @@ const ouvrirDialogPhoto = () => {
 const fermerDialogPhoto = () => {
   nouvellePhoto.value.fichier = null;
   nouvellePhoto.value.description = '';
-  dialogPhoto.value = false;
+  nouvellePhoto.value.photoName;dialogPhoto.value = false;
 };
 
 const validerAjoutPhoto = async() => {
-  // Valider le formulaire. Si la validation échoue, les messages d'erreur s'affichent.
+  
+  console.log(nouvellePhoto)
+
   if (!form.value.validate()) {
     return;
   }
   
   console.log('Nouvelle photo sélectionnée :', nouvellePhoto.value.fichier);
   console.log('Description :', nouvellePhoto.value.description);
+  console.log('Nom :', nouvellePhoto.value.photoName)
 
-  const newUrl = "/images/" + nouvellePhoto.value.fichier.name
-
-  try{
-    
+  try {
     const fichierImage = nouvellePhoto.value.fichier;
+    
+    // Convertir l'image en base64
+    const base64Image = await convertirImageEnBase64(fichierImage);
 
-    const imageURL = URL.createObjectURL(fichierImage);
-    const lien = document.createElement('a');
-    lien.href = imageURL;
-    lien.download = fichierImage.name;
-    document.body.appendChild(lien);
-    lien.click();
-    document.body.removeChild(lien);
-    URL.revokeObjectURL(imageURL);
-
-
+    
     const requestBody = {
-      photoUrl: newUrl,
-      description: nouvellePhoto.value.description
+      photoBase64: base64Image.split(',')[1],
+      description: nouvellePhoto.value.description,
+      photoName: nouvellePhoto.value.photoName
     }
 
-        // Ajouter à l'API
-        const response = await fetch(url, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(requestBody)
-        }).then(() => {
-          chargerPhoto();
-        }).catch(err => console.error("Erreur ajout:", err));
-
+    // Ajouter à l'API
+    await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(requestBody)
+    });
+    
+    // Recharger les photos et fermer le dialogue
+    chargerPhoto();
     fermerDialogPhoto();
-    } catch (err) {
+  } catch (err) {
     console.error("Erreur ajout:", err);
   }
 };
 
+// Fonction pour convertir une image en base64
+const convertirImageEnBase64 = (fichier) => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    
+    reader.onload = () => {
+      // Le résultat est une chaîne en base64 avec le préfixe "data:image/jpeg;base64,"
+      // Vous pouvez soit conserver ce préfixe, soit l'enlever selon vos besoins
+      resolve(reader.result);
+    };
+    
+    reader.onerror = (error) => {
+      reject(error);
+    };
+    
+    reader.readAsDataURL(fichier);
+  });
+};
 const filtrerPhotos = computed(() => {
   if (!recherche.value) return photos.value;
   const termeLowerCase = recherche.value.toLowerCase().trim();
@@ -249,7 +269,7 @@ const filtrerPhotos = computed(() => {
 
 const photoSelectionItems = computed(() =>
   photos.value.map((photo, index) => ({
-    titre: photo.photoUrl.split('/').pop(),
+    titre: photo.photoName,
     index: index
   }))
 );
@@ -258,7 +278,7 @@ const selectPhoto = (index) => {
   if (mode.value !== 'manuel') return;
   const photo = filtrerPhotos.value[index];
   const realIndex = photos.value.findIndex(
-    p => p.photoUrl.split('/').pop() === photo.photoUrl.split('/').pop()
+    p => p.description.split(' ')[0] === photo.description.split(' ')[0]
   );
   photoJourIndex.value = photoJourIndex.value === realIndex ? null : realIndex;
 };
