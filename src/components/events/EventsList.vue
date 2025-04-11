@@ -43,7 +43,7 @@
         </td>
     </tr>
     </tbody>
-</v-table>
+    Z</v-table>
 </template>
 
 <script setup>

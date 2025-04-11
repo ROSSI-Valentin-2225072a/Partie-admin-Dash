@@ -41,97 +41,91 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import EventsSidebar from '@/components/events/EventsSidebar.vue'
 import EventForm from '@/components/events/EventForm.vue'
 import EventsDisplay from '@/components/events/EventsDisplay'
+import { ref } from "vue"
 
-export default {
-  components: {
-    EventsSidebar,
-    EventForm,
-    EventsDisplay
-  },
-  data() {
-    return {
-      showAddForm: false,
-      events: [],
-      searchQuery: '',
-      viewMode: 'grid',
-      activeFilters: [],
-      periodFilter: 'all',
-      periodOptions: [
-        { label: 'Tous', value: 'all' },
-        { label: 'Aujourd\'hui', value: 'today' },
-        { label: 'Cette semaine', value: 'week' },
-        { label: 'Ce mois', value: 'month' }
-      ],
-      tags: [
-        { libelle: 'Réunion', tag: 'meeting' },
-        { libelle: 'Formation', tag: 'training' },
-        { libelle: 'Conférence', tag: 'conference' },
-        { libelle: 'Autre', tag: 'other' }
-      ],
-      currentMonth: new Date().getMonth(),
-      currentYear: new Date().getFullYear(),
-      weekdays: ['L', 'M', 'M', 'J', 'V', 'S', 'D']
-    }
-  },
-  computed: {
-    calendarDays() {
-      // Logic to generate calendar days
-      return this.generateCalendarDays()
-    }
-  },
-  methods: {
-    generateCalendarDays() {
-      // Logic to generate calendar days array
-      const days = []
-      // Your implementation here
-      return days
-    },
-    toggleFilter(filter) {
-      if (this.activeFilters.includes(filter)) {
-        this.activeFilters = this.activeFilters.filter(f => f !== filter)
-      } else {
-        this.activeFilters.push(filter)
-      }
-    },
-    prevMonth() {
-      if (this.currentMonth === 0) {
-        this.currentMonth = 11
-        this.currentYear--
-      } else {
-        this.currentMonth--
-      }
-    },
-    nextMonth() {
-      if (this.currentMonth === 11) {
-        this.currentMonth = 0
-        this.currentYear++
-      } else {
-        this.currentMonth++
-      }
-    },
-    selectDay(day) {
-      // Logic for selecting a specific day
-    },
-    addEvent(event) {
-      // Logic to add a new event
-      this.events.push(event)
-      this.showAddForm = false
-    },
-    viewEvent(event) {
-      // Logic to view event details
-    },
-    editEvent(event) {
-      // Logic to edit an event
-    },
-    deleteEvent(eventId) {
-      // Logic to delete an event
-      this.events = this.events.filter(e => e.id !== eventId)
-    }
+const showAddForm = ref(false)
+const events = ref([])
+const searchQuery = ref('')
+const viewMode = ref('grid')
+const activeFilters = ref([])
+const periodFilter = ref('all')
+const periodOptions = [
+    { label: 'Tous', value: 'all' },
+    { label: 'Aujourd\'hui', value: 'today' },
+    { label: 'Cette semaine', value: 'week' },
+    { label: 'Ce mois', value: 'month' }
+  ]
+const tags = [
+    { libelle: 'Réunion', tag: 'meeting' },
+    { libelle: 'Formation', tag: 'training' },
+    { libelle: 'Conférence', tag: 'conference' },
+    { libelle: 'Autre', tag: 'other' }
+  ]
+const currentMonth = new Date().getMonth()
+const currentYear = new Date().getFullYear()
+const weekdays = ['L', 'M', 'M', 'J', 'V', 'S', 'D']
+
+function calendarDays() {
+  // Logic to generate calendar days
+  return this.generateCalendarDays()
+}
+
+function generateCalendarDays() {
+  const days = []
+  return days
+}
+
+function toggleFilter(filter) {
+  if (this.activeFilters.includes(filter)) {
+    this.activeFilters = this.activeFilters.filter(f => f !== filter)
+  } else {
+    this.activeFilters.push(filter)
   }
+}
+
+function prevMonth() {
+  if (this.currentMonth === 0) {
+    this.currentMonth = 11
+    this.currentYear--
+  } else {
+    this.currentMonth--
+  }
+}
+
+function nextMonth() {
+  if (this.currentMonth === 11) {
+    this.currentMonth = 0
+    this.currentYear++
+  } else {
+    this.currentMonth++
+  }
+}
+
+function selectDay(day) {
+  // Logic for selecting a specific day
+}
+
+function addEvent(event) {
+  // Logic to add a new event
+  this.events.push(event)
+  this.showAddForm = false
+}
+
+function viewEvent(event) {
+  // Logic to view event details
+}
+
+function editEvent(event) {
+  // Logic to edit an event
+}
+
+function deleteEvent(eventId) {
+  // Logic to delete an event
+  this.events = this.events.filter(e => e.id !== eventId)
 }
 </script>
 
