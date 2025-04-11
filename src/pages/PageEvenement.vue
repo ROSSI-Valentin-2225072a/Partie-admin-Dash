@@ -44,7 +44,7 @@
 <script>
 import EventsSidebar from '@/components/events/EventsSidebar.vue'
 import EventForm from '@/components/events/EventForm.vue'
-import EventsDisplay from '@/components/events/EventsDisplay.vue'
+import EventsDisplay from '@/components/events/EventsDisplay'
 
 export default {
   components: {
