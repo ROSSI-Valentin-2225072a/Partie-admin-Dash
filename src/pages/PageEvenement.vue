@@ -1,120 +1,138 @@
 <template>
   <div class="page-evenement">
-    <div class="events-sidebar">
-      <button class="add-event-btn" @click="showAddForm = true">
-        <span class="plus-icon">+</span>
-        <span>Ajouter un événement</span>
-      </button>
-
-      <v-card class="filters-card">
-        <h3>Filtres</h3>
-        <h5>Type d'événement</h5>
-          <div class="filter-options">
-            <button
-              v-for="type in tags"
-              :key="type.libelle"
-              class="filter-chip"
-              :class="{ active: activeFilters.includes(type.libelle) }"
-              @click="toggleFilter(type.libelle)">
-              <span class="filter-dot" :class="`dot-${type.tag}`"></span>
-              {{ type.libelle }}
-            </button>
-          </div>
-
-        <h5>Période</h5>
-        <div class="period-buttons">
-          <button
-            v-for="period in periodOptions"
-            :key="period.value"
-            :class="[
-              'period-btn',
-              { active: periodFilter === period.value },
-            ]"
-            @click="periodFilter = period.value">
-            {{ period.label }}
-          </button>
-        </div>
-      </v-card>
-    </div>
-
-    <v-card class="calendar-preview">
-      
-    </v-card>
+    <EventsSidebar 
+      :activeFilters="activeFilters"
+      :tags="tags"
+      :periodFilter="periodFilter"
+      :periodOptions="periodOptions"
+      :currentMonth="currentMonth"
+      :currentYear="currentYear"
+      :calendarDays="calendarDays"
+      :weekdays="weekdays"
+      @toggle-filter="toggleFilter"
+      @change-period="periodFilter = $event"
+      @prev-month="prevMonth"
+      @next-month="nextMonth"
+      @select-day="selectDay"
+      @show-add-form="showAddForm = true"
+    />
 
     <div class="events-main">
+      <EventForm 
+        v-if="showAddForm" 
+        @close="showAddForm = false"
+        @add-event="addEvent"
+      />
 
-      <div v-if="showAddForm" class="form-card">
-
-      </div>
-
-      <div v-else class="events-display">
-
-      </div>
+      <EventsDisplay
+        v-else
+        :events="events"
+        :searchQuery="searchQuery"
+        :viewMode="viewMode"
+        :activeFilters="activeFilters"
+        :periodFilter="periodFilter"
+        @update:search-query="searchQuery = $event"
+        @update:view-mode="viewMode = $event"
+        @view-event="viewEvent"
+        @edit-event="editEvent"
+        @delete-event="deleteEvent"
+      />
     </div>
-
   </div>
 </template>
 
-<script setup>
-import { ref, onMounted } from "vue";
+<script>
+import EventsSidebar from '@/components/events/EventsSidebar.vue'
+import EventForm from '@/components/events/EventForm.vue'
+import EventsDisplay from '@/components/events/EventsDisplay.vue'
 
-const showAddForm = ref(false)
-const events = ref([])
-const eventTypes = ref([])
-const activeFilters = ref([])
-const tags = ref([])
-const recherche = ref('')
-const url = "https://dashboardisis.alwaysdata.net/api/v1/dashboard/event"
-const periodOptions = [
-        { value: "all", label: "Tous" },
-        { value: "upcoming", label: "À venir" },
-        { value: "past", label: "Passés" },
-        { value: "month", label: "Ce mois" },
-      ]
-const periodFilter = ref('all')
-
-const chargerEventTypes = async() => {
-  try {
-    const response = await fetch(url);
-    const data = await response.json();
-    events.value = data;
-    const typeList = data.map(
-        (item) => item.type
-      );
-    eventTypes.value = [...new Set(typeList)]
-
-    tags.value = eventTypes.value.map(event => {
-      const tag = event.libelle.split(" ")[0]
-      .toLowerCase()
-      .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // Supprime les accents
-      return { 
-        libelle : event.libelle, 
-        tag : tag
-      }
+export default {
+  components: {
+    EventsSidebar,
+    EventForm,
+    EventsDisplay
+  },
+  data() {
+    return {
+      showAddForm: false,
+      events: [],
+      searchQuery: '',
+      viewMode: 'grid',
+      activeFilters: [],
+      periodFilter: 'all',
+      periodOptions: [
+        { label: 'Tous', value: 'all' },
+        { label: 'Aujourd\'hui', value: 'today' },
+        { label: 'Cette semaine', value: 'week' },
+        { label: 'Ce mois', value: 'month' }
+      ],
+      tags: [
+        { libelle: 'Réunion', tag: 'meeting' },
+        { libelle: 'Formation', tag: 'training' },
+        { libelle: 'Conférence', tag: 'conference' },
+        { libelle: 'Autre', tag: 'other' }
+      ],
+      currentMonth: new Date().getMonth(),
+      currentYear: new Date().getFullYear(),
+      weekdays: ['L', 'M', 'M', 'J', 'V', 'S', 'D']
     }
-  )
-
-    console.log(events.value);
-    console.log(eventTypes.value);
-    console.log(tags.value)
-
-  } catch (error) {
-    console.error('Erreur lors du chargement des evenements :', error);
+  },
+  computed: {
+    calendarDays() {
+      // Logic to generate calendar days
+      return this.generateCalendarDays()
+    }
+  },
+  methods: {
+    generateCalendarDays() {
+      // Logic to generate calendar days array
+      const days = []
+      // Your implementation here
+      return days
+    },
+    toggleFilter(filter) {
+      if (this.activeFilters.includes(filter)) {
+        this.activeFilters = this.activeFilters.filter(f => f !== filter)
+      } else {
+        this.activeFilters.push(filter)
+      }
+    },
+    prevMonth() {
+      if (this.currentMonth === 0) {
+        this.currentMonth = 11
+        this.currentYear--
+      } else {
+        this.currentMonth--
+      }
+    },
+    nextMonth() {
+      if (this.currentMonth === 11) {
+        this.currentMonth = 0
+        this.currentYear++
+      } else {
+        this.currentMonth++
+      }
+    },
+    selectDay(day) {
+      // Logic for selecting a specific day
+    },
+    addEvent(event) {
+      // Logic to add a new event
+      this.events.push(event)
+      this.showAddForm = false
+    },
+    viewEvent(event) {
+      // Logic to view event details
+    },
+    editEvent(event) {
+      // Logic to edit an event
+    },
+    deleteEvent(eventId) {
+      // Logic to delete an event
+      this.events = this.events.filter(e => e.id !== eventId)
+    }
   }
 }
-
-function toggleFilter(type) {
-  const index = this.activeFilters.indexOf(type);
-  if (index === -1) {
-    this.activeFilters.push(type);
-  } else {
-    this.activeFilters.splice(index, 1);
-  }
-}
-
-onMounted(() => {
-  chargerEventTypes()
-})
 </script>
 
 <style scoped>
@@ -129,7 +147,6 @@ onMounted(() => {
   max-width: 1400px;
 }
 
-/* Sidebar */
 .events-sidebar {
   width: 300px;
   flex-shrink: 0;
@@ -503,7 +520,7 @@ onMounted(() => {
   background-color: #2196f3;
 }
 
-.dot-conférence {
+.dot-conference {
   background-color: #ff9800;
 }
 
@@ -511,7 +528,7 @@ onMounted(() => {
   background-color: #4caf50;
 }
 
-.dot-pédagogique {
+.dot-pedagogique {
   background-color: #e91e63;
 }
 
