@@ -18,8 +18,10 @@
     </v-row>
   </template>
   
-  <script>
+  <script setup>
   import EventCard from './EventCard.vue'
+  import { defineProps } from "vue"
+
   const props = defineProps(["events"])
 
   </script>

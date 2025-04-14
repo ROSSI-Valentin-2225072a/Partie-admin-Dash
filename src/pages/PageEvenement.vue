@@ -20,6 +20,7 @@
     <div class="events-main">
       <EventForm 
         v-if="showAddForm" 
+        :eventTypes="tags"
         @close="showAddForm = false"
         @add-event="addEvent"
       />
@@ -27,12 +28,13 @@
       <EventsDisplay
         v-else
         :events="events"
+        :eventTypes="tags"
         :searchQuery="searchQuery"
         :viewMode="viewMode"
         :activeFilters="activeFilters"
         :periodFilter="periodFilter"
-        @update:search-query="searchQuery = $event"
-        @update:view-mode="viewMode = $event"
+        @update:searchQuery="searchQuery = $event"
+        @update:viewMode="viewMode = $event"
         @view-event="viewEvent"
         @edit-event="editEvent"
         @delete-event="deleteEvent"
@@ -45,8 +47,9 @@
 import EventsSidebar from '@/components/events/EventsSidebar.vue'
 import EventForm from '@/components/events/EventForm.vue'
 import EventsDisplay from '@/components/events/EventsDisplay'
-import { ref } from "vue"
+import { ref, onMounted } from "vue"
 
+const url = "https://dashboardisis.alwaysdata.net/api/v1/dashboard/event"
 const showAddForm = ref(false)
 const events = ref([])
 const searchQuery = ref('')
@@ -59,19 +62,58 @@ const periodOptions = [
     { label: 'Cette semaine', value: 'week' },
     { label: 'Ce mois', value: 'month' }
   ]
-const tags = [
-    { libelle: 'Réunion', tag: 'meeting' },
-    { libelle: 'Formation', tag: 'training' },
-    { libelle: 'Conférence', tag: 'conference' },
-    { libelle: 'Autre', tag: 'other' }
-  ]
-const currentMonth = new Date().getMonth()
-const currentYear = new Date().getFullYear()
+const tags = ref([])
+const currentMonth = ref(new Date().getMonth())
+const currentYear = ref(new Date().getFullYear())
 const weekdays = ['L', 'M', 'M', 'J', 'V', 'S', 'D']
 
+function loadEvents() {
+  const fetchOptions = { method : 'GET' }
+
+  fetch(url, fetchOptions)
+  .then((response) => response.json())
+  .then((dataJSON) => {
+    const reponse = dataJSON
+
+    events.value = reponse
+
+    const typeList = dataJSON.map(
+        (item) => item.type
+      );
+
+    typeList.forEach(event => {
+      const tag = event.libelle.split(" ")[0]
+      .toLowerCase()
+      .normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    
+      const tagExists = tags.value.some(existingTag => existingTag.tag === tag);
+    
+      if (!tagExists) {
+        tags.value.push({ 
+          libelle: event.libelle, 
+          tag: tag 
+        });
+      }
+    });
+  })
+}
+
 function calendarDays() {
-  // Logic to generate calendar days
-  return this.generateCalendarDays()
+  const days = [];
+  const firstDay = new Date(this.currentYear, this.currentMonth, 1);
+  const lastDay = new Date(this.currentYear, this.currentMonth + 1, 0);
+
+  const firstDayOfWeek = firstDay.getDay();
+  const startOffset = firstDayOfWeek === 0 ? 6 : firstDayOfWeek - 1;
+  for (let i = 0; i < startOffset; i++) {
+    days.push("");
+  }
+
+  for (let i = 1; i <= lastDay.getDate(); i++) {
+    days.push(i);
+  }
+
+  return days;
 }
 
 function generateCalendarDays() {
@@ -80,39 +122,61 @@ function generateCalendarDays() {
 }
 
 function toggleFilter(filter) {
-  if (this.activeFilters.includes(filter)) {
-    this.activeFilters = this.activeFilters.filter(f => f !== filter)
+  if (activeFilters.value.includes(filter)) {
+    activeFilters.value = activeFilters.value.filter(f => f !== filter)
   } else {
-    this.activeFilters.push(filter)
+    activeFilters.value.push(filter)
   }
 }
 
 function prevMonth() {
-  if (this.currentMonth === 0) {
-    this.currentMonth = 11
-    this.currentYear--
+  if (currentMonth.value === 0) {
+    currentMonth.value = 11
+    currentYear.value--
   } else {
-    this.currentMonth--
+    currentMonth.value--
   }
 }
 
 function nextMonth() {
-  if (this.currentMonth === 11) {
-    this.currentMonth = 0
-    this.currentYear++
+  if (currentMonth.value === 11) {
+    currentMonth.value = 0
+    currentYear.value++
   } else {
-    this.currentMonth++
+    currentMonth.value++
   }
 }
 
 function selectDay(day) {
-  // Logic for selecting a specific day
+  const formattedDate = `${currentYear.value}-${String(
+    currentMonth.value + 1
+  ).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+
+  const eventsOnDay = events.value.filter(
+    (event) => event.dateEvent === formattedDate
+  );
+  if (eventsOnDay.length === 1) {
+    this.viewEvent(eventsOnDay[0]);
+  } else if (eventsOnDay.length > 1) {
+    this.periodFilter = "all";
+    this.searchQuery = formattedDate;
+  } else {
+    this.showAddForm = true;
+    this.formData.date = formattedDate;
+    this.isEditing = false;
+  }
 }
 
 function addEvent(event) {
-  // Logic to add a new event
-  this.events.push(event)
-  this.showAddForm = false
+  const fetchOptions = {
+    method: "POST",
+    headers: {
+          "Content-Type": "application/json",
+        },
+    body: JSON.stringify(event)
+  }
+
+  fetch(url, fetchOptions)
 }
 
 function viewEvent(event) {
@@ -125,8 +189,12 @@ function editEvent(event) {
 
 function deleteEvent(eventId) {
   // Logic to delete an event
-  this.events = this.events.filter(e => e.id !== eventId)
+  events = events.filter(e => e.id !== eventId)
 }
+
+onMounted(() => {
+  loadEvents();
+});
 </script>
 
 <style scoped>
@@ -178,13 +246,7 @@ function deleteEvent(eventId) {
 }
 
 .filters-card,
-.calendar-preview {
-  background-color: #ffffff;
-  border-radius: 10px;
-  padding: 16px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-  margin-bottom: 20px;
-}
+
 
 .filters-card h3 {
   color: #673ab7;
@@ -280,91 +342,8 @@ function deleteEvent(eventId) {
   color: #673ab7;
 }
 
-/* Calendar */
-.calendar-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #673ab7;
-  color: white;
-  padding: 10px;
-  border-radius: 8px 8px 0 0;
-  font-weight: 500;
-}
 
-.calendar-nav-btn {
-  background: none;
-  border: none;
-  color: white;
-  cursor: pointer;
-  padding: 0 5px;
-  font-size: 14px;
-}
 
-.calendar-grid {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 1px;
-  background-color: #fff;
-  border: 1px solid #e0e0e0;
-  border-radius: 0 0 8px 8px;
-}
-
-.weekday {
-  text-align: center;
-  padding: 8px 0;
-  font-size: 12px;
-  background-color: #f5f5f5;
-  border-bottom: 1px solid #eee;
-  font-weight: 500;
-}
-
-.day {
-  text-align: center;
-  padding: 8px 0;
-  font-size: 13px;
-  position: relative;
-  cursor: pointer;
-}
-
-.day:hover:not(.empty) {
-  background-color: #f0f0f0;
-}
-
-.day.empty {
-  background-color: #f9f9f9;
-  cursor: default;
-}
-
-.day.weekend {
-  color: #aaa;
-}
-
-.day.current {
-  background-color: #e8eaf6;
-  font-weight: 700;
-  color: #3f51b5;
-}
-
-.day.has-event {
-  font-weight: 600;
-}
-
-.event-indicators {
-  position: absolute;
-  bottom: 2px;
-  left: 0;
-  right: 0;
-  display: flex;
-  justify-content: center;
-  gap: 2px;
-}
-
-.event-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-}
 
 /* Main content */
 .events-main {

@@ -10,17 +10,17 @@
     <v-card-text>
       <v-form ref="form" v-model="valid">
         <v-text-field
-          v-model="event.title"
+          v-model="event.nomEvent"
           label="Titre"
           required
           :rules="titleRules"
         ></v-text-field>
         
         <v-select
-          v-model="event.type"
+          v-model="event.type.libelle"
           :items="eventTypes"
           item-title="libelle"
-          item-value="tag"
+          item-value="libelle"
           label="Type d'événement"
           required
         ></v-select>
@@ -28,22 +28,15 @@
         <v-row>
           <v-col cols="6">
             <v-date-picker
-              v-model="event.date"
+              v-model="event.dateEvent"
               label="Date"
               required
             ></v-date-picker>
           </v-col>
-          <v-col cols="6">
-            <v-time-picker
-              v-model="event.time"
-              format="24hr"
-              label="Heure"
-            ></v-time-picker>
-          </v-col>
         </v-row>
         
         <v-text-field
-          v-model="event.location"
+          v-model="event.lieu"
           label="Lieu"
         ></v-text-field>
         
@@ -74,14 +67,18 @@
   </v-card>
 </template>
 
-<script>
-import { ref } from "vue";
+<script setup>
+import { ref, defineProps } from "vue";
 
+const props = defineProps(["eventTypes"])
+const emit = defineEmits(['close', 'add-event']);
+
+const form = ref(null)
 const valid = ref(false)
 
 const event = ref({
     nomEvent: '',
-    type: '',
+    type: {libelle: ''},
     dateEvent: new Date().toISOString().substr(0, 10),
     lieu: '',
     description: ''
@@ -92,20 +89,12 @@ const titleRules = [
     v => v.length <= 100 || 'Le titre doit contenir moins de 100 caractères'
   ]
 
-const eventTypes = [
-    { libelle: 'Réunion', tag: 'meeting' },
-    { libelle: 'Formation', tag: 'training' },
-    { libelle: 'Conférence', tag: 'conference' },
-    { libelle: 'Autre', tag: 'other' }
-  ]
-
-function submitForm() {
-  if (this.$refs.form.validate()) {
+  function submitForm() {
+  if (form.value && form.value.validate()) {
     const newEvent = {
-      ...this.event,
-      id: Date.now()
-    }
-    this.$emit('add-event', newEvent)
+      ...event.value,
+    };
+    emit('add-event', newEvent);
   }
 }
 

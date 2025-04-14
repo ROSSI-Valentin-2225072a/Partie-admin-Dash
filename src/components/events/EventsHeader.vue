@@ -3,18 +3,20 @@
     <h2>Événements</h2>
     <div class="events-controls">
     <v-text-field
-        v-model="localSearchQuery"
+        v-model="searchQuery"
         placeholder="Rechercher..."
         prepend-inner-icon="mdi-magnify"
         density="compact"
         variant="outlined"
         class="search-box"
+        @input="$emit('update:searchQuery', $event.target.value)"
     ></v-text-field>
     
     <div class="events-view-controls">
         <v-btn-toggle
-        v-model="localViewMode"
+        v-model="viewMode"
         mandatory
+        @change="$emit('update:viewMode', $event)"
         >
         <v-btn :value="'grid'" variant="text">
             <v-icon>mdi-view-grid</v-icon>
@@ -28,10 +30,10 @@
 </div>
 </template>
   
-<script>
-import { localSearchQuery } from '@/localSearchQuery'
-import { localViewMode } from '@/localViewMode';
+<script setup>
+import { defineModel } from "vue"
 
-const props = defineProps(["searchQuery", "viewMode"])
+const searchQuery = defineModel("searchQuery")
+const viewMode = defineModel("viewMode")
 
 </script>

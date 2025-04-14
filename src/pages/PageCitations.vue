@@ -17,14 +17,12 @@
       </v-radio-group>
     </v-card>
 
-    <!-- Bloc de citations -->
     <v-card
       class="pa-4 citation-container flex-grow-1 position-relative"
       elevation="5"
     >
       <h2 class="mb-3 purple-text">Citations</h2>
 
-      <!-- Barre de recherche (visible dans les deux modes, mais désactivée en mode auto) -->
       <v-text-field
         v-model="recherche"
         label="Rechercher une citation"
@@ -202,7 +200,6 @@ const chargerCitations = async () => {
   }
 };
 
-// Filtrage des citations
 const citationsFiltrees = computed(() => {
   if (!recherche.value.trim()) return citations.value;
   const termeLowerCase = recherche.value.toLowerCase().trim();
@@ -216,7 +213,6 @@ const getIndexReel = (index) => {
   return citations.value.indexOf(citationsFiltrees.value[index]);
 };
 
-// Obtenir l'ID de la citation pour les appels API
 const getCitationId = (index) => {
   const realIndex = getIndexReel(index)
   const citationId = citationsData.value[realIndex].quoteId

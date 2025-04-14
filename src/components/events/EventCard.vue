@@ -1,30 +1,29 @@
 <template>
     <v-card
       class="event-card"
-      :class="`event-border-${event.type}`"
+      :class="`event-border-${event.type.libelle}`"
     >
       <div class="event-date-badge">
-        <div class="event-day">{{ getDayNumber(event.date) }}</div>
-        <div class="event-month">{{ getMonthShort(event.date) }}</div>
+        <div class="event-day">{{ getDayNumber(event.dateEvent) }}</div>
+        <div class="event-month">{{ getMonthShort(event.dateEvent) }}</div>
       </div>
   
       <v-card-text class="event-content">
         <div class="event-header">
           <v-chip
-            :color="getEventTypeColor(event.type)"
+            :color="getEventTypeColor(event.type.libelle)"
             size="small"
             class="event-type-badge"
           >
-            {{ getEventTypeName(event.type) }}
+            {{ getEventTypeName(event.type.libelle) }}
           </v-chip>
-          <div class="event-time">{{ formatTime(event.time) }}</div>
         </div>
   
-        <h3 class="event-title">{{ event.title }}</h3>
+        <h3 class="event-title">{{ event.nomEvent }}</h3>
   
         <div class="event-location">
           <v-icon size="small">mdi-map-marker</v-icon>
-          {{ event.location || "Non spécifié" }}
+          {{ event.lieu || "Non spécifié" }}
         </div>
       </v-card-text>
   
@@ -42,7 +41,8 @@
     </v-card>
   </template>
   
-<script>
+<script setup>
+import { defineProps } from "vue"
 
 const props = defineProps(["event"])
 
@@ -54,10 +54,6 @@ function getDayNumber(date) {
 function getMonthShort(date) {
     const monthNames = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc']
     return monthNames[new Date(date).getMonth()]
-}
-
-function formatTime(time) {
-    return time || '00:00'
 }
 
 function getEventTypeName(type) {

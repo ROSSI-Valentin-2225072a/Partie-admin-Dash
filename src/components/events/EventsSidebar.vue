@@ -27,9 +27,10 @@
 
     <v-card-subtitle>Période</v-card-subtitle>
     <v-btn-toggle
-        v-model="localPeriodFilter"
+        :value="periodFilter"
         mandatory
         class="period-buttons"
+        @change="$emit('change-period', $event)"
     >
         <v-btn
         v-for="period in periodOptions"
@@ -53,8 +54,9 @@
 </div>
 </template>
 
-<script>
+<script setup>
 import CalendarPreview from './CalendarPreview.vue'
+import { defineProps } from "vue"
 
 const props = defineProps([
     "activeFilters",
