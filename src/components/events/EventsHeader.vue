@@ -3,20 +3,20 @@
     <h2>Événements</h2>
     <div class="events-controls">
     <v-text-field
-        v-model="searchQuery"
+        :model-value="searchQuery"
+        @update:model-value="$emit('update:searchQuery', $event)"
         placeholder="Rechercher..."
         prepend-inner-icon="mdi-magnify"
         density="compact"
         variant="outlined"
         class="search-box"
-        @input="$emit('update:searchQuery', $event.target.value)"
     ></v-text-field>
     
     <div class="events-view-controls">
         <v-btn-toggle
-        v-model="viewMode"
+        :model-value="viewMode"
+        @update:model-value="$emit('update:viewMode', $event)"
         mandatory
-        @change="$emit('update:viewMode', $event)"
         >
         <v-btn :value="'grid'" variant="text">
             <v-icon>mdi-view-grid</v-icon>
@@ -29,11 +29,14 @@
     </div>
 </div>
 </template>
-  
+    
 <script setup>
-import { defineModel } from "vue"
+import { defineProps, defineEmits } from "vue"
 
-const searchQuery = defineModel("searchQuery")
-const viewMode = defineModel("viewMode")
+const props = defineProps({
+    searchQuery: { type: String, default: '' },
+    viewMode: { type: String, default: 'grid' }
+})
 
+const emit = defineEmits(['update:searchQuery', 'update:viewMode'])
 </script>

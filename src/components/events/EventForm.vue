@@ -96,6 +96,7 @@ const titleRules = [
     };
     emit('add-event', newEvent);
   }
+  emit('close')
 }
 
 </script>

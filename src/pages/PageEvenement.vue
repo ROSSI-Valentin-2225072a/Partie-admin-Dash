@@ -56,6 +56,7 @@ const searchQuery = ref('')
 const viewMode = ref('grid')
 const activeFilters = ref([])
 const periodFilter = ref('all')
+const selectedEvent = ref(null)
 const periodOptions = [
     { label: 'Tous', value: 'all' },
     { label: 'Aujourd\'hui', value: 'today' },
@@ -177,19 +178,34 @@ function addEvent(event) {
   }
 
   fetch(url, fetchOptions)
+  location.reload()
 }
 
 function viewEvent(event) {
-  // Logic to view event details
+  selectedEvent.value = event
 }
 
 function editEvent(event) {
-  // Logic to edit an event
+  //a implémenter
 }
 
 function deleteEvent(eventId) {
-  // Logic to delete an event
-  events = events.filter(e => e.id !== eventId)
+  const fetchOptions = {
+    method : 'DELETE'
+  }
+
+  const confirmation = window.confirm(
+    "Êtes-vous sûr de vouloir supprimer cet évènement ?"
+  );
+  if (confirmation) {
+    try {
+      fetch(url + `/id=${eventId}`, fetchOptions)
+    } catch(error) {
+      console.error("An error occured while deleting : ", error)
+    }
+  }
+  loadEvents()
+  location.reload()
 }
 
 onMounted(() => {
@@ -380,218 +396,7 @@ onMounted(() => {
 }
 
 /* Formulaire d'ajout/modification */
-.form-card {
-  background-color: white;
-  border-radius: 10px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-  margin: 15px;
-  overflow: hidden;
-}
 
-.form-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 15px 20px;
-  background-color: #673ab7;
-  color: white;
-}
-
-.form-header h2 {
-  margin: 0;
-  font-size: 18px;
-  font-weight: 600;
-}
-
-.form-content {
-  padding: 20px;
-}
-
-.form-group {
-  margin-bottom: 18px;
-}
-
-.form-row {
-  display: flex;
-  gap: 15px;
-  margin-bottom: 18px;
-}
-
-.form-group.half {
-  width: 50%;
-}
-
-.form-group.two-thirds {
-  width: 66.66%;
-}
-
-.form-group.one-third {
-  width: 33.33%;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 8px;
-  font-weight: 500;
-  color: #555;
-  font-size: 14px;
-}
-
-.form-group input[type="text"],
-.form-group input[type="date"],
-.form-group input[type="time"],
-.form-group textarea {
-  width: 100%;
-  padding: 10px 12px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  font-size: 14px;
-  transition: border-color 0.2s;
-}
-
-.form-group input:focus,
-.form-group textarea:focus {
-  border-color: #673ab7;
-  outline: none;
-  box-shadow: 0 0 0 2px rgba(103, 58, 183, 0.1);
-}
-
-.event-type-options {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.event-type-option {
-  padding: 8px 12px;
-  border-radius: 6px;
-  border: 1px solid #ddd;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  font-size: 14px;
-  transition: all 0.2s;
-}
-
-.event-type-option:hover {
-  background-color: #f5f5f5;
-}
-
-.event-type-option.active {
-  background-color: #ede7f6;
-  border-color: #673ab7;
-}
-
-.color-dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  margin-right: 8px;
-}
-
-.dot-vie {
-  background-color: #2196f3;
-}
-
-.dot-conference {
-  background-color: #ff9800;
-}
-
-.dot-interne {
-  background-color: #4caf50;
-}
-
-.dot-pedagogique {
-  background-color: #e91e63;
-}
-
-.upload-area {
-  border: 2px dashed #ddd;
-  border-radius: 6px;
-  padding: 20px;
-  text-align: center;
-  cursor: pointer;
-  transition: all 0.2s;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  min-height: 109px; /* Match textarea height */
-}
-
-.upload-area:hover {
-  border-color: #673ab7;
-  background-color: #f9f5ff;
-}
-
-.upload-icon {
-  font-size: 24px;
-  margin-bottom: 10px;
-  color: #888;
-}
-
-.upload-btn {
-  background-color: #f0f0f0;
-  border: none;
-  padding: 6px 12px;
-  border-radius: 4px;
-  font-size: 13px;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.upload-btn:hover {
-  background-color: #e0e0e0;
-}
-
-.form-actions {
-  display: flex;
-  justify-content: flex-end;
-  padding: 15px 20px;
-  background-color: #f5f5f5;
-  border-top: 1px solid #eee;
-  gap: 10px;
-}
-
-.btn-cancel {
-  padding: 10px 16px;
-  border: 1px solid #ddd;
-  background-color: white;
-  border-radius: 6px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.btn-cancel:hover {
-  background-color: #f5f5f5;
-}
-
-.btn-save {
-  padding: 10px 20px;
-  background-color: #673ab7;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.btn-save:hover {
-  background-color: #7e57c2;
-}
-
-.close-btn {
-  background: none;
-  border: none;
-  color: white;
-  font-size: 24px;
-  cursor: pointer;
-  padding: 0;
-  line-height: 1;
-}
 
 /* Affichage des événements */
 .events-display {

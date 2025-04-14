@@ -15,7 +15,7 @@
             size="small"
             class="event-type-badge"
           >
-            {{ getEventTypeName(event.type.libelle) }}
+            {{ event.type.libelle }}
           </v-chip>
         </div>
   
@@ -44,7 +44,7 @@
 <script setup>
 import { defineProps } from "vue"
 
-const props = defineProps(["event"])
+const props = defineProps(["event", "eventTypes"])
 
 
 function getDayNumber(date) {
@@ -54,16 +54,6 @@ function getDayNumber(date) {
 function getMonthShort(date) {
     const monthNames = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc']
     return monthNames[new Date(date).getMonth()]
-}
-
-function getEventTypeName(type) {
-    const types = {
-        meeting: 'Réunion',
-        training: 'Formation',
-        conference: 'Conférence',
-        other: 'Autre'
-    }
-    return types[type] || 'Autre'
 }
 
 function getEventTypeColor(type) {
@@ -76,4 +66,101 @@ function getEventTypeColor(type) {
     return colors[type] || 'grey'
 }
 
-  </script>
+</script>
+
+<style scoped>
+
+.event-card {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  padding-left: 60px;
+  margin: 1rem 0;
+  border-left: 5px solid transparent;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  background-color: white;
+  justify-content: space-between;
+  min-height: 250px;
+}
+
+.event-card:hover {
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.event-date-badge {
+  position: absolute;
+  left: 16px;
+  top: 16px;
+  width: 40px;
+  height: 40px;
+  background-color: #f3f4f6;
+  border-radius: 8px;
+  text-align: center;
+  font-weight: bold;
+  line-height: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  font-size: 0.85rem;
+}
+
+.event-day {
+  font-size: 1.1rem;
+}
+
+.event-month {
+  font-size: 0.75rem;
+  color: #555;
+}
+
+.event-content {
+  padding-left: 0;
+}
+
+.event-header {
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.event-type-badge {
+  text-transform: capitalize;
+  font-weight: 500;
+}
+
+.event-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem;
+  color: #1f2937;
+}
+
+.event-location {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #6b7280;
+  font-size: 0.95rem;
+}
+
+.event-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0.5rem 1rem;
+  gap: 8px;
+}
+
+.action-btn {
+  color: #4b5563;
+  transition: color 0.2s;
+}
+
+.action-btn:hover {
+  color: #1f2937;
+}
+
+</style>

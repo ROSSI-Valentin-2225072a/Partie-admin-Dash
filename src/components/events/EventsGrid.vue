@@ -10,18 +10,20 @@
       >
         <EventCard
           :event="event"
+          :eventTypes="eventTypes"
           @view="$emit('view-event', event)"
           @edit="$emit('edit-event', event)"
           @delete="$emit('delete-event', event.id)"
         />
       </v-col>
     </v-row>
+    
   </template>
   
   <script setup>
   import EventCard from './EventCard.vue'
   import { defineProps } from "vue"
 
-  const props = defineProps(["events"])
+  const props = defineProps(["events", "eventTypes"])
 
   </script>

@@ -23,7 +23,7 @@
             size="x-small"
             class="event-type-badge small"
         >
-            {{ getEventTypeName(event.type.libelle) }}
+            {{ event.type.libelle }}
         </v-chip>
         </td>
         <td>{{ event.nomEvent }}</td>
@@ -47,21 +47,11 @@
 <script setup>
 import { defineProps } from "vue"
 
-const props = defineProps(["events"])
+const props = defineProps(["events", "eventTypes"])
 
 function formatDateShort(date) {
     const d = new Date(date)
     return `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`
-}
-
-function getEventTypeName(type) {
-    const types = {
-        meeting: 'Réunion',
-        training: 'Formation',
-        conference: 'Conférence',
-        other: 'Autre'
-    }
-    return types[type] || 'Autre'
 }
 
 function getEventTypeColor(type) {
