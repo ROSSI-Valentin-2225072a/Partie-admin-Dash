@@ -183,7 +183,6 @@ const chargerPhoto = async () => {
     const response = await fetch(url);
     const data = await response.json();
     photos.value = data;
-    console.log(photos.value);
   } catch (error) {
     console.error('Erreur lors du chargement des photos :', error);
   }
@@ -200,16 +199,10 @@ const fermerDialogPhoto = () => {
 };
 
 const validerAjoutPhoto = async() => {
-  
-  console.log(nouvellePhoto)
 
   if (!form.value.validate()) {
     return;
   }
-  
-  console.log('Nouvelle photo sélectionnée :', nouvellePhoto.value.fichier);
-  console.log('Description :', nouvellePhoto.value.description);
-  console.log('Nom :', nouvellePhoto.value.photoName)
 
   try {
     const fichierImage = nouvellePhoto.value.fichier;

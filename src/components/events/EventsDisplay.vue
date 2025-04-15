@@ -45,7 +45,6 @@ const viewMode = ref('grid')
 
 
 const filteredEvents = computed(() => {
-  // console.log(props.periodFilter)
   if (!searchQuery.value.trim() && props.activeFilters.length === 0) return props.events;
 
   const termeLowerCase = searchQuery.value.toLowerCase().trim();
@@ -86,8 +85,4 @@ function filterByPeriod(event) {
   return true
 }
 
-// Pour déboguer
-watch(searchQuery, (newValue) => {
-  console.log("La valeur de searchQuery a changé:", newValue)
-})
 </script>

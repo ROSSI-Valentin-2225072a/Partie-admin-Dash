@@ -209,7 +209,6 @@ const citationsFiltrees = computed(() => {
 });
 
 const getIndexReel = (index) => {
-  console.log(citations.value.indexOf(citationsFiltrees.value[index]))
   return citations.value.indexOf(citationsFiltrees.value[index]);
 };
 
@@ -319,6 +318,7 @@ const supprimerCitation = async (index) => {
 const selectUnique = (index) => {
   const citationReelle = getIndexReel(index);
   selectedCitation.value = citationReelle;
+  process.env.NEXT_CITATION = selectedCitation.value
 };
 
 const cliquerCitation = (index) => {
@@ -349,7 +349,6 @@ const confirmerEdition = () => {
 };
 
 const validerEdition = async () => {
-  console.log('here')
   if (editionIndex.value !== null && citationEditee.value.trim()) {
     try {
       errorMessage.value = ""; // Réinitialiser le message d'erreur
