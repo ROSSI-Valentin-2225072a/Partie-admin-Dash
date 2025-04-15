@@ -9,6 +9,7 @@
       v-if="viewMode === 'grid'"
       :events="filteredEvents"
       :eventTypes="eventTypes"
+      @selectEvent="$emit('selectEvent', $event)"
       @viewEvent="$emit('viewEvent', $event)"
       @editEvent="$emit('editEvent', $event)"
       @deleteEvent="$emit('deleteEvent', $event)"
@@ -18,6 +19,7 @@
       v-else
       :events="filteredEvents"
       :eventTypes="eventTypes"
+      @selectEvent="$emit('selectEvent', $event)"
       @viewEvent="$emit('viewEvent', $event)"
       @editEvent="$emit('editEvent', $event)"
       @deleteEvent="$emit('deleteEvent', $event)"

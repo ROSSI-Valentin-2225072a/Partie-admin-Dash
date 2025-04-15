@@ -11,6 +11,7 @@
       <EventCard
         :event="event"
         :eventTypes="eventTypes"
+        @select="$emit('selectEvent', event.id)"
         @view="$emit('viewEvent', event)"
         @edit="$emit('editEvent', event)"
         @delete="$emit('deleteEvent', event.id)"

@@ -36,6 +36,7 @@
         :periodFilter="periodFilter"
         @update:searchQuery="searchQuery = $event"
         @update:viewMode="viewMode = $event"
+        @selectEvent="selectEvent"
         @viewEvent="viewEvent"
         @editEvent="editEvent"
         @deleteEvent="deleteEvent"
@@ -177,6 +178,10 @@ function addEvent(event) {
 
   fetch(url, fetchOptions)
   location.reload()
+}
+
+function selectEvent() {
+  // à implémenter et ajouter event en argument
 }
 
 function viewEvent(event) {

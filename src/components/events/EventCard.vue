@@ -7,7 +7,7 @@
         <div class="event-day">{{ getDayNumber(event.dateEvent) }}</div>
         <div class="event-month">{{ getMonthShort(event.dateEvent) }}</div>
       </div>
-  
+
       <v-card-text class="event-content">
         <div class="event-header">
           <v-chip
@@ -18,16 +18,19 @@
             {{ event.type.libelle }}
           </v-chip>
         </div>
-  
+
         <h3 class="event-title">{{ event.nomEvent }}</h3>
-  
+
         <div class="event-location">
           <v-icon size="small">mdi-map-marker</v-icon>
           {{ event.lieu || "Non spécifié" }}
         </div>
       </v-card-text>
-  
+
       <v-card-actions class="event-actions">
+        <v-btn icon @click="$emit('select', event)" class="action-btn">
+          <v-icon>mdi-check</v-icon>
+        </v-btn>
         <v-btn icon @click="$emit('view', event)" class="action-btn">
           <v-icon>mdi-eye</v-icon>
         </v-btn>
@@ -40,7 +43,7 @@
       </v-card-actions>
     </v-card>
   </template>
-  
+
 <script setup>
 import { defineProps } from "vue"
 

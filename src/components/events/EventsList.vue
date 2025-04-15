@@ -29,6 +29,9 @@
         <td>{{ event.nomEvent }}</td>
         <td>{{ event.lieu || "–" }}</td>
         <td>
+        <v-btn icon density="compact" @click="$emit('selectEvent', event.id)">
+            <v-icon>mdi-check</v-icon>
+        </v-btn>
         <v-btn icon density="compact" @click="$emit('viewEvent', event)">
             <v-icon>mdi-eye</v-icon>
         </v-btn>
