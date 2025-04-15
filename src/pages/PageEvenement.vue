@@ -101,8 +101,12 @@ function loadEvents() {
 
 function calendarDays() {
   const days = [];
-  const firstDay = new Date(this.currentYear, this.currentMonth, 1);
-  const lastDay = new Date(this.currentYear, this.currentMonth + 1, 0);
+
+  const currentYear = new Date().getFullYear();
+  const currentMonth = new Date().getMonth();
+
+  const firstDay = new Date(currentYear, currentMonth, 1);
+  const lastDay = new Date(currentYear, currentMonth + 1, 0);
 
   const firstDayOfWeek = firstDay.getDay();
   const startOffset = firstDayOfWeek === 0 ? 6 : firstDayOfWeek - 1;
@@ -114,12 +118,8 @@ function calendarDays() {
     days.push(i);
   }
 
+  console.log(days)
   return days;
-}
-
-function generateCalendarDays() {
-  const days = []
-  return days
 }
 
 function toggleFilter(filter) {
@@ -202,7 +202,7 @@ function deleteEvent(eventId) {
       fetch(url + `/id=${eventId}`, fetchOptions)
 
       loadEvents()
-      location.reload()
+      // location.reload()
     } catch(error) {
       console.error("An error occured while deleting : ", error)
     }

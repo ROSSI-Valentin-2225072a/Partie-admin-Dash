@@ -26,28 +26,30 @@
 import { ref, onMounted } from "vue"
 
 const days = ["L", "Ma", "Me", "J", "V", "S", "D"]
-
-//  À remplacer par l'appel à l’API plus tard
-const birthdays = ref([
-  {
-    name: "Manon FLEURANCEAU",
-    date: "2025-04-11"
-  },
-  {
-    name: "Tom Anderson",
-    date: "2025-04-12"
-  }
-])
+const birthdays = ref([])
+const url = "https://dashboardisis.alwaysdata.net/api/v1/dashboard/person"
 
 const today = new Date()
 const todayBirthday = ref(null)
 const birthdayDays = ref([])
 
-// Format FR (ex : 11 avril)
 const formattedDate = today.toLocaleDateString("fr-FR", {
   day: "2-digit",
   month: "long"
 })
+
+function loadBirthdays() {
+  const fetchOptions = { method: "GET" }
+
+  fetch(url, fetchOptions)
+    .then((response) => response.json())
+    .then((dataJSON) => {
+      birthdays.value = dataJSON
+    })
+    .catch((error) => {
+      console.error("Erreur lors de la récupération des anniversaires : ", error)
+    })
+}
 
 onMounted(() => {
   birthdays.value.forEach((person) => {

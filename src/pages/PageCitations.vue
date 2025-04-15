@@ -318,7 +318,8 @@ const supprimerCitation = async (index) => {
 
 const selectUnique = (index) => {
   selectedCitation.value = citations.value[getIndexReel(index)];
-  import.meta.env.NEXT_CITATION = selectedCitation.value
+  quoteStore.setNextPhoto(selectedCitation.value)
+  console.log(quoteStore.nextQuote)
 };
 
 const cliquerCitation = (index) => {
@@ -399,7 +400,9 @@ const selectRandomCitation = () => {
   if (citations.value.length > 0) {
     const randomIndex = Math.floor(Math.random() * citations.value.length);
     selectedCitation.value = getIndexReel(randomIndex);
-    import.meta.env.NEXT_CITATION = citations.value[selectedCitation.value];
+    quoteStore.setNextPhoto(citations.value[selectedCitation.value])
+
+    console.log(quoteStore.nextQuote)
   }
 };
 
