@@ -11,7 +11,7 @@
 
     <v-card class="filters-card">
     <v-card-title>Filtres</v-card-title>
-    
+
     <v-card-subtitle>Type d'événement</v-card-subtitle>
     <div class="filter-options">
         <v-chip
@@ -66,7 +66,7 @@ const props = defineProps([
     "currentMonth",
     "currentYear",
     "calendarDays",
-    "weekdays" 
+    "weekdays"
 ]);
 
 </script>
@@ -102,11 +102,6 @@ const props = defineProps([
   background-color: #7e57c2;
   transform: translateY(-2px);
   box-shadow: 0 6px 12px rgba(103, 58, 183, 0.3);
-}
-
-.plus-icon {
-  margin-right: 8px;
-  font-size: 18px;
 }
 
 .filters-card,

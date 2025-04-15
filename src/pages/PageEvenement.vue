@@ -271,11 +271,7 @@ onMounted(() => {
   color: #333;
 }
 
-.events-controls {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
+
 
 .search-box input {
   padding: 8px 12px;
@@ -292,58 +288,8 @@ onMounted(() => {
   box-shadow: 0 0 0 2px rgba(103, 58, 183, 0.1);
 }
 
-.events-view-controls {
-  display: flex;
-  gap: 5px;
-}
-
-.view-btn {
-  background-color: #f0f0f0;
-  border: none;
-  border-radius: 4px;
-  width: 36px;
-  height: 36px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.view-btn:hover {
-  background-color: #e0e0e0;
-}
-
-.view-btn.active {
-  background-color: #673ab7;
-  color: white;
-}
-
-.view-icon {
-  font-size: 18px;
-}
-
 /* Vue Grille */
-.events-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 20px;
-}
 
-.event-card {
-  background-color: white;
-  border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  overflow: hidden;
-  position: relative;
-  transition: all 0.25s ease;
-  display: flex;
-}
-
-.event-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-}
 
 .event-border-vie {
   border-left: 4px solid #2196f3;

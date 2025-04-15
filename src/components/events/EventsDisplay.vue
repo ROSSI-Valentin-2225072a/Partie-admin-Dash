@@ -4,7 +4,7 @@
       v-model:searchQuery="searchQuery"
       v-model:viewMode="viewMode"
     />
-    
+
     <EventsGrid
       v-if="viewMode === 'grid'"
       :events="filteredEvents"
@@ -13,7 +13,7 @@
       @editEvent="$emit('editEvent', $event)"
       @deleteEvent="$emit('deleteEvent', $event)"
     />
-    
+
     <EventsList
       v-else
       :events="filteredEvents"
@@ -29,7 +29,7 @@
 import EventsHeader from './EventsHeader.vue'
 import EventsGrid from './EventsGrid.vue'
 import EventsList from './EventsList.vue'
-import { ref, computed, defineProps, defineEmits, watch } from "vue"
+import { ref, computed, defineProps, defineEmits } from "vue"
 
 const props = defineProps([
   "events",
@@ -45,21 +45,28 @@ const viewMode = ref('grid')
 
 
 const filteredEvents = computed(() => {
+
   if (!searchQuery.value.trim() && props.activeFilters.length === 0) return props.events;
 
   const termeLowerCase = searchQuery.value.toLowerCase().trim();
 
-  props.events.filter((event) =>
+  const filteredBySearch =  props.events.filter((event) =>
     event.nomEvent.toLowerCase().includes(termeLowerCase)
-  );
+  )
 
+  console.log("filtered events", filteredBySearch)
+  /*
   props.events.filter((event) =>
     filterByPeriod(event)
   )
-
-  return props.events.filter((event) => 
-    props.activeFilters.includes(event.type.libelle)
-  )
+   */
+  let filteredByTag = filteredBySearch
+  if (props.activeFilters.length !== 0) {
+    filteredByTag = filteredBySearch.filter((event) =>
+      props.activeFilters.includes(event.type.libelle)
+    )
+  }
+  return filteredByTag
 })
 
 function filterByPeriod(event) {
@@ -86,3 +93,11 @@ function filterByPeriod(event) {
 }
 
 </script>
+
+<style scoped>
+
+.events-display {
+  padding: 15px;
+}
+
+</style>

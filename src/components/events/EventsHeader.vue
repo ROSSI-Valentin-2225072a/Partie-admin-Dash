@@ -11,7 +11,7 @@
         variant="outlined"
         class="search-box"
     ></v-text-field>
-    
+
     <div class="events-view-controls">
         <v-btn-toggle
         :model-value="viewMode"
@@ -29,7 +29,7 @@
     </div>
 </div>
 </template>
-    
+
 <script setup>
 import { defineProps, defineEmits } from "vue"
 
@@ -40,3 +40,8 @@ const props = defineProps({
 
 const emit = defineEmits(['update:searchQuery', 'update:viewMode'])
 </script>
+
+<style scoped>
+
+
+</style>
