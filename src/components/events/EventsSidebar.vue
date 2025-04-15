@@ -47,6 +47,7 @@
     :currentYear="currentYear"
     :calendarDays="calendarDays"
     :weekdays="weekdays"
+    :events="events"
     @prevMonth="$emit('prevMonth')"
     @nextMonth="$emit('nextMonth')"
     @selectDay="$emit('selectDay', $event)"
@@ -56,17 +57,18 @@
 
 <script setup>
 import CalendarPreview from './CalendarPreview.vue'
-import { defineProps } from "vue"
+import {defineProps} from "vue"
 
 const props = defineProps([
-    "activeFilters",
-    "tags",
-    "periodFilter",
-    "periodOptions",
-    "currentMonth",
-    "currentYear",
-    "calendarDays",
-    "weekdays"
+  "activeFilters",
+  "tags",
+  "periodFilter",
+  "periodOptions",
+  "currentMonth",
+  "currentYear",
+  "calendarDays",
+  "weekdays",
+  "events"
 ]);
 
 </script>
@@ -75,27 +77,23 @@ const props = defineProps([
 
 .events-sidebar {
   width: 300px;
-  flex-shrink: 0;
-  overflow-y: auto;
   height: 100%;
-  padding-right: 5px;
+  overflow-y: auto;
+  padding: 20px 10px 20px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 .add-event-btn {
   background-color: #673ab7;
-  color: white;
-  border: none;
-  padding: 12px 15px;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  cursor: pointer;
+  color: #fff;
   font-weight: 600;
-  margin-bottom: 20px;
+  border-radius: 8px;
+  padding: 12px 16px;
+  width: 100%;
   box-shadow: 0 4px 10px rgba(103, 58, 183, 0.25);
-  transition: all 0.2s ease;
+  transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s;
 }
 
 .add-event-btn:hover {
@@ -104,23 +102,26 @@ const props = defineProps([
   box-shadow: 0 6px 12px rgba(103, 58, 183, 0.3);
 }
 
-.filters-card,
-
-
-.filters-card h3 {
-  color: #673ab7;
-  margin-top: 0;
-  margin-bottom: 15px;
-  font-size: 16px;
-  font-weight: 600;
+.filters-card {
+  background-color: #fafafa;
+  padding: 16px;
+  border-radius: 10px;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.05);
 }
 
-.filter-card label {
-  display: block;
-  margin-bottom: 8px;
-  font-weight: 500;
-  color: #555;
+.v-card-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #673ab7;
+  margin-bottom: 10px;
+}
+
+.v-card-subtitle {
   font-size: 14px;
+  font-weight: 600;
+  color: #555;
+  margin-top: 12px;
+  margin-bottom: 8px;
 }
 
 .filter-options {
@@ -129,33 +130,33 @@ const props = defineProps([
   gap: 8px;
 }
 
-.filter-chip {
+.v-chip {
   display: flex;
   align-items: center;
-  padding: 8px 12px;
+  gap: 8px;
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: 500;
   border-radius: 6px;
   background-color: #f5f5f5;
-  font-size: 13px;
   cursor: pointer;
-  transition: all 0.2s;
-  border: 1px solid transparent;
+  transition: all 0.2s ease;
 }
 
-.filter-chip:hover {
+.v-chip:hover {
   background-color: #ede7f6;
 }
 
-.filter-chip.active {
+.v-chip.active {
   background-color: #ede7f6;
-  border-color: #673ab7;
-  font-weight: 500;
+  border: 1px solid #673ab7;
+  color: #673ab7;
 }
 
-.filter-dot {
+.v-avatar {
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  margin-right: 8px;
 }
 
 .dot-vie {
@@ -175,31 +176,35 @@ const props = defineProps([
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+  margin-top: 10px;
 }
 
-.period-btn {
-  flex: 1;
-  min-width: 80px;
-  text-align: center;
-  padding: 8px 12px;
-  border-radius: 6px;
-  border: 1px solid #ddd;
-  background-color: #f5f5f5;
+.v-btn-toggle {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.v-btn {
+  min-width: 90px;
+  padding: 8px 10px;
   font-size: 13px;
-  cursor: pointer;
-  transition: all 0.2s;
+  background-color: #f5f5f5;
+  color: #333;
+  border-radius: 6px;
+  text-align: center;
+  transition: all 0.2s ease;
 }
 
-.period-btn:hover {
+.v-btn:hover {
   background-color: #ede7f6;
 }
 
-.period-btn.active {
-  background-color: #ede7f6;
-  border-color: #673ab7;
-  font-weight: 500;
-  color: #673ab7;
+.v-btn--active {
+  background-color: #ede7f6 !important;
+  border: 1px solid #673ab7;
+  font-weight: 600;
+  color: #673ab7 !important;
 }
-
 
 </style>

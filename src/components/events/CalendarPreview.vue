@@ -9,7 +9,7 @@
         <v-icon>mdi-chevron-right</v-icon>
       </v-btn>
     </div>
-    
+
     <div class="calendar-grid">
       <div class="weekday" v-for="day in weekdays" :key="day">
         {{ day }}
@@ -47,12 +47,26 @@
 
 <script setup>
 
+import {onMounted, ref} from "vue";
+
 const props = defineProps([
   "currentMonth",
   "currentYear",
   "calendarDays",
   "weekdays"
 ])
+const url = "https://dashboardisis.alwaysdata.net/api/v1/dashboard/event"
+const events = ref([])
+
+const loadEventsLocally = async() => {
+  const fetchOptions = {
+    method: "GET",
+  };
+
+  const reponse = await fetch(url, fetchOptions)
+
+  events.value = await reponse.json()
+}
 
 function getCurrentMonthYear() {
   const monthNames = [
@@ -68,32 +82,38 @@ function isWeekend(dayIndex) {
 
 function hasEventOnDay(day) {
   if (!day) return false;
-  const formattedDate = `${this.currentYear}-${String(
-    this.currentMonth + 1
+  const formattedDate = `${props.currentYear}-${String(
+    props.currentMonth + 1
   ).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-  return this.events.some((event) => event.date === formattedDate);
+
+  return events.value.some((event) => event.date === formattedDate);
 }
 
 function isCurrentDay(day) {
   const today = new Date()
-  return day === today.getDate() && 
-          this.currentMonth === today.getMonth() && 
-          this.currentYear === today.getFullYear()
+  return day === today.getDate() &&
+    props.currentMonth === today.getMonth() &&
+    props.currentYear === today.getFullYear()
 }
 
 function getEventIndicators(day) {
   if (!day) return [];
-  const formattedDate = `${this.currentYear}-${String(
-    this.currentMonth + 1
+  const formattedDate = `${props.currentYear}-${String(
+    props.currentMonth + 1
   ).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
   return [
     ...new Set(
-      this.events
+      events.value
         .filter((event) => event.date === formattedDate)
         .map((event) => event.type)
     ),
   ];
 }
+
+onMounted(() => {
+  loadEventsLocally()
+})
+
 </script>
 
 <style scoped>

@@ -7,8 +7,9 @@
       :periodOptions="periodOptions"
       :currentMonth="currentMonth"
       :currentYear="currentYear"
-      :calendarDays="calendarDays"
+      :calendarDays="calendarDays()"
       :weekdays="weekdays"
+      :events="events"
       @toggleFilter="toggleFilter"
       @changePeriod="periodFilter = $event"
       @prev-month="prevMonth"
@@ -71,29 +72,27 @@ const weekdays = ['L', 'M', 'M', 'J', 'V', 'S', 'D']
 const loadEvents = async() => {
   const fetchOptions = { method : 'GET' }
 
-  fetch(url, fetchOptions)
-  .then((response) => response.json())
-  .then((dataJSON) => {
-    events.value = dataJSON
+  const reponse = await fetch(url, fetchOptions)
 
-    const typeList = dataJSON.map(
-        (item) => item.type
-      );
+  events.value = await reponse.json()
 
-    typeList.forEach(event => {
-      const tag = event.libelle.split(" ")[0]
+  const typeList = events.value.map(
+    (item) => item.type
+  );
+
+  typeList.forEach(event => {
+    const tag = event.libelle.split(" ")[0]
       .toLowerCase()
       .normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
-      const tagExists = tags.value.some(existingTag => existingTag.tag === tag);
+    const tagExists = tags.value.some(existingTag => existingTag.tag === tag);
 
-      if (!tagExists) {
-        tags.value.push({
-          libelle: event.libelle,
-          tag: tag
-        });
-      }
-    });
+    if (!tagExists) {
+      tags.value.push({
+        libelle: event.libelle,
+        tag: tag
+      });
+    }
   })
 }
 
@@ -116,7 +115,6 @@ function calendarDays() {
     days.push(i);
   }
 
-  console.log(days)
   return days;
 }
 
@@ -155,14 +153,16 @@ function selectDay(day) {
     (event) => event.dateEvent === formattedDate
   );
   if (eventsOnDay.length === 1) {
-    this.viewEvent(eventsOnDay[0]);
+    viewEvent(eventsOnDay[0]);
   } else if (eventsOnDay.length > 1) {
-    this.periodFilter = "all";
-    this.searchQuery = formattedDate;
+    periodFilter.value = "all";
+    searchQuery.value = formattedDate;
   } else {
-    this.showAddForm = true;
-    this.formData.date = formattedDate;
-    this.isEditing = false;
+    showAddForm.value = true;
+    /*
+    formData.value.date = formattedDate;
+    isEditing.value = false;
+     */
   }
 }
 
@@ -207,8 +207,8 @@ function deleteEvent(eventId) {
   }
 }
 
-onMounted(() => {
-  loadEvents();
+onMounted(async () => {
+  await loadEvents();
 });
 </script>
 
