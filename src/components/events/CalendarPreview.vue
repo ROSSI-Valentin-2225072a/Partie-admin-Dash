@@ -5,7 +5,7 @@
         <v-icon>mdi-chevron-left</v-icon>
       </v-btn>
       <span>{{ getCurrentMonthYear() }}</span>
-      <v-btn icon @click="$emit('next-month')">
+      <v-btn icon @click="$emit('nextMonth')">
         <v-icon>mdi-chevron-right</v-icon>
       </v-btn>
     </div>
@@ -26,7 +26,7 @@
             current: day && isCurrentDay(day),
           },
         ]"
-        @click="day && $emit('select-day', day)"
+        @click="day && $emit('selectDay', day)"
       >
         {{ day }}
         <div

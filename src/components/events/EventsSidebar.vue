@@ -18,7 +18,7 @@
         v-for="type in tags"
         :key="type.libelle"
         :class="{ active: activeFilters.includes(type.libelle) }"
-        @click="$emit('toggle-filter', type.libelle)"
+        @click="$emit('toggleFilter', type.libelle)"
         >
         <v-avatar start :class="`dot-${type.tag}`"></v-avatar>
         {{ type.libelle }}
@@ -30,7 +30,7 @@
         :value="periodFilter"
         mandatory
         class="period-buttons"
-        @change="$emit('change-period', $event)"
+        @change="$emit('changePeriod', $event)"
     >
         <v-btn
         v-for="period in periodOptions"
@@ -47,9 +47,9 @@
     :currentYear="currentYear"
     :calendarDays="calendarDays"
     :weekdays="weekdays"
-    @prev-month="$emit('prev-month')"
-    @next-month="$emit('next-month')"
-    @select-day="$emit('select-day', $event)"
+    @prevMonth="$emit('prevMonth')"
+    @nextMonth="$emit('nextMonth')"
+    @selectDay="$emit('selectDay', $event)"
     />
 </div>
 </template>
@@ -70,3 +70,141 @@ const props = defineProps([
 ]);
 
 </script>
+
+<style scoped>
+
+.events-sidebar {
+  width: 300px;
+  flex-shrink: 0;
+  overflow-y: auto;
+  height: 100%;
+  padding-right: 5px;
+}
+
+.add-event-btn {
+  background-color: #673ab7;
+  color: white;
+  border: none;
+  padding: 12px 15px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  cursor: pointer;
+  font-weight: 600;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 10px rgba(103, 58, 183, 0.25);
+  transition: all 0.2s ease;
+}
+
+.add-event-btn:hover {
+  background-color: #7e57c2;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(103, 58, 183, 0.3);
+}
+
+.plus-icon {
+  margin-right: 8px;
+  font-size: 18px;
+}
+
+.filters-card,
+
+
+.filters-card h3 {
+  color: #673ab7;
+  margin-top: 0;
+  margin-bottom: 15px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.filter-card label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #555;
+  font-size: 14px;
+}
+
+.filter-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.filter-chip {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 6px;
+  background-color: #f5f5f5;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 1px solid transparent;
+}
+
+.filter-chip:hover {
+  background-color: #ede7f6;
+}
+
+.filter-chip.active {
+  background-color: #ede7f6;
+  border-color: #673ab7;
+  font-weight: 500;
+}
+
+.filter-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
+.dot-vie {
+  background-color: #4caf50;
+}
+.dot-conference {
+  background-color: #2196f3;
+}
+.dot-interne {
+  background-color: #ff9800;
+}
+.dot-pedagogique {
+  background-color: #9c27b0;
+}
+
+.period-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.period-btn {
+  flex: 1;
+  min-width: 80px;
+  text-align: center;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  background-color: #f5f5f5;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.period-btn:hover {
+  background-color: #ede7f6;
+}
+
+.period-btn.active {
+  background-color: #ede7f6;
+  border-color: #673ab7;
+  font-weight: 500;
+  color: #673ab7;
+}
+
+
+</style>

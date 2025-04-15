@@ -11,9 +11,9 @@
         <EventCard
           :event="event"
           :eventTypes="eventTypes"
-          @view="$emit('view-event', event)"
-          @edit="$emit('edit-event', event)"
-          @delete="$emit('delete-event', event.id)"
+          @view="$emit('viewEvent', event)"
+          @edit="$emit('editEvent', event)"
+          @delete="$emit('deleteEvent', event.id)"
         />
       </v-col>
     </v-row>

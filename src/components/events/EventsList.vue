@@ -29,13 +29,13 @@
         <td>{{ event.nomEvent }}</td>
         <td>{{ event.lieu || "–" }}</td>
         <td>
-        <v-btn icon density="compact" @click="$emit('view-event', event)">
+        <v-btn icon density="compact" @click="$emit('viewEvent', event)">
             <v-icon>mdi-eye</v-icon>
         </v-btn>
-        <v-btn icon density="compact" @click="$emit('edit-event', event)">
+        <v-btn icon density="compact" @click="$emit('editEvent', event)">
             <v-icon>mdi-pencil</v-icon>
         </v-btn>
-        <v-btn icon density="compact" @click="$emit('delete-event', event.id)">
+        <v-btn icon density="compact" @click="$emit('deleteEvent', event.id)">
             <v-icon>mdi-delete</v-icon>
         </v-btn>
         </td>

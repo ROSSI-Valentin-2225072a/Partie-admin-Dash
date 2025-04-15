@@ -9,18 +9,18 @@
       v-if="viewMode === 'grid'"
       :events="filteredEvents"
       :eventTypes="eventTypes"
-      @view-event="$emit('view-event', $event)"
-      @edit-event="$emit('edit-event', $event)"
-      @delete-event="$emit('delete-event', $event)"
+      @viewEvent="$emit('viewEvent', $event)"
+      @editEvent="$emit('editEvent', $event)"
+      @deleteEvent="$emit('deleteEvent', $event)"
     />
     
     <EventsList
       v-else
       :events="filteredEvents"
       :eventTypes="eventTypes"
-      @view-event="$emit('view-event', $event)"
-      @edit-event="$emit('edit-event', $event)"
-      @delete-event="$emit('delete-event', $event)"
+      @viewEvent="$emit('viewEvent', $event)"
+      @editEvent="$emit('editEvent', $event)"
+      @deleteEvent="$emit('deleteEvent', $event)"
     />
   </div>
 </template>
@@ -38,21 +38,29 @@ const props = defineProps([
   "eventTypes"
 ])
 
-const emit = defineEmits(['view-event', 'edit-event', 'delete-event'])
+const emit = defineEmits(['viewEvent', 'editEvent', 'deleteEvent'])
 
 const searchQuery = ref('')
 const viewMode = ref('grid')
 
 
 const filteredEvents = computed(() => {
-  if (!searchQuery.value.trim()) return props.events;
+  console.log(props.periodFilter)
+  if (!searchQuery.value.trim() && props.activeFilters.length === 0) return props.events;
 
   const termeLowerCase = searchQuery.value.toLowerCase().trim();
 
-  console.log(termeLowerCase)
-  return props.events.filter((event) =>
+  props.events.filter((event) =>
     event.nomEvent.toLowerCase().includes(termeLowerCase)
   );
+
+  props.events.filter((event) =>
+    filterByPeriod(event)
+  )
+
+  return props.events.filter((event) => 
+    props.activeFilters.includes(event.type.libelle)
+  )
 })
 
 function filterByPeriod(event) {
