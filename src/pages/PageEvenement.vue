@@ -1,6 +1,6 @@
 <template>
   <div class="page-evenement">
-    <EventsSidebar 
+    <EventsSidebar
       :activeFilters="activeFilters"
       :tags="tags"
       :periodFilter="periodFilter"
@@ -18,8 +18,8 @@
     />
 
     <div class="events-main">
-      <EventForm 
-        v-if="showAddForm" 
+      <EventForm
+        v-if="showAddForm"
         :eventTypes="tags"
         @close="showAddForm = false"
         @add-event="addEvent"
@@ -86,13 +86,13 @@ function loadEvents() {
       const tag = event.libelle.split(" ")[0]
       .toLowerCase()
       .normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-    
+
       const tagExists = tags.value.some(existingTag => existingTag.tag === tag);
-    
+
       if (!tagExists) {
-        tags.value.push({ 
-          libelle: event.libelle, 
-          tag: tag 
+        tags.value.push({
+          libelle: event.libelle,
+          tag: tag
         });
       }
     });
@@ -186,7 +186,7 @@ function viewEvent(event) {
 }
 
 function editEvent(event) {
-  //a implémenter
+  console.log(event)
 }
 
 function deleteEvent(eventId) {

@@ -151,8 +151,10 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted, nextTick } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
+import { useQuoteStore } from "@/stores/quoteStore";
 
+const quoteStore = useQuoteStore();
 const mode = ref("manuel");
 const selectedCitation = ref(null);
 const hoveredTrash = ref(null);
@@ -214,8 +216,7 @@ const getIndexReel = (index) => {
 
 const getCitationId = (index) => {
   const realIndex = getIndexReel(index)
-  const citationId = citationsData.value[realIndex].quoteId
-  return citationId
+  return citationsData.value[realIndex].quoteId
 };
 
 const ajouterCitation = async () => {
@@ -316,15 +317,13 @@ const supprimerCitation = async (index) => {
 };
 
 const selectUnique = (index) => {
-  const citationReelle = getIndexReel(index);
-  selectedCitation.value = citationReelle;
-  process.env.NEXT_CITATION = selectedCitation.value
+  selectedCitation.value = citations.value[getIndexReel(index)];
+  import.meta.env.NEXT_CITATION = selectedCitation.value
 };
 
 const cliquerCitation = (index) => {
   if (mode.value === "manuel") {
-    const citationReelle = getIndexReel(index);
-    selectedCitation.value = citationReelle;
+    selectedCitation.value = citations.value[getIndexReel(index)];
   }
 };
 
@@ -396,10 +395,19 @@ const annulerEdition = () => {
   citationEditee.value = "";
 };
 
+const selectRandomCitation = () => {
+  if (citations.value.length > 0) {
+    const randomIndex = Math.floor(Math.random() * citations.value.length);
+    selectedCitation.value = getIndexReel(randomIndex);
+    import.meta.env.NEXT_CITATION = citations.value[selectedCitation.value];
+  }
+};
+
 // Surveiller les changements de mode
 watch(mode, (newMode) => {
   if (newMode === "auto") {
-    chargerCitations(); // Recharger les citations en mode automatique
+    chargerCitations();
+    selectRandomCitation();
   }
 });
 

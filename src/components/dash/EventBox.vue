@@ -20,9 +20,6 @@ function chargerEvents() {
     }).catch((error) => {
         console.error("Erreur lors de la récupération des évènements : ", error);
     });
-
-
-    listEvents.value.filter((currentEvent) => currentEvent.getMonth() == currentMonth)
 }
 
 function eventIsInTimeFrame(dateToCompare) {

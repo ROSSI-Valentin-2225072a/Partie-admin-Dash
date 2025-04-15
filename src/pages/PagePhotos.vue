@@ -154,9 +154,10 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue';
+import {computed, onMounted, ref, watch } from 'vue';
+import { usePhotoStore } from "@/stores/photoStore";
 
-// Variables et état
+const photoStore = usePhotoStore();
 const mode = ref('manuel');
 const photoJourIndex = ref(null);
 const photos = ref([]);
@@ -169,20 +170,18 @@ const nouvellePhoto = ref({
 });
 const form = ref(null);
 
-// Règles de validation
 const rules = {
   required: value => !!value || 'Veuillez remplir ce champ',
-  // Pour le champ description, on accepte uniquement s'il y a au moins un caractère non-espace
   requiredChamp: value => (value && value.trim().length > 0) || 'Veuillez remplir ce champ'
 };
-
 const url = 'https://dashboardisis.alwaysdata.net/api/v1/dashboard/photo';
+
+
 
 const chargerPhoto = async () => {
   try {
     const response = await fetch(url);
-    const data = await response.json();
-    photos.value = data;
+    photos.value = await response.json();
   } catch (error) {
     console.error('Erreur lors du chargement des photos :', error);
   }
@@ -195,7 +194,8 @@ const ouvrirDialogPhoto = () => {
 const fermerDialogPhoto = () => {
   nouvellePhoto.value.fichier = null;
   nouvellePhoto.value.description = '';
-  nouvellePhoto.value.photoName;dialogPhoto.value = false;
+  nouvellePhoto.value.photoName = '';
+  dialogPhoto.value = false;
 };
 
 const validerAjoutPhoto = async() => {
@@ -206,11 +206,11 @@ const validerAjoutPhoto = async() => {
 
   try {
     const fichierImage = nouvellePhoto.value.fichier;
-    
+
     // Convertir l'image en base64
     const base64Image = await convertirImageEnBase64(fichierImage);
 
-    
+
     const requestBody = {
       photoBase64: base64Image.split(',')[1],
       description: nouvellePhoto.value.description,
@@ -225,9 +225,9 @@ const validerAjoutPhoto = async() => {
       },
       body: JSON.stringify(requestBody)
     });
-    
+
     // Recharger les photos et fermer le dialogue
-    chargerPhoto();
+    await chargerPhoto();
     fermerDialogPhoto();
   } catch (err) {
     console.error("Erreur ajout:", err);
@@ -238,17 +238,17 @@ const validerAjoutPhoto = async() => {
 const convertirImageEnBase64 = (fichier) => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
-    
+
     reader.onload = () => {
       // Le résultat est une chaîne en base64 avec le préfixe "data:image/jpeg;base64,"
       // Vous pouvez soit conserver ce préfixe, soit l'enlever selon vos besoins
       resolve(reader.result);
     };
-    
+
     reader.onerror = (error) => {
       reject(error);
     };
-    
+
     reader.readAsDataURL(fichier);
   });
 };
@@ -274,6 +274,10 @@ const selectPhoto = (index) => {
     p => p.description.split(' ')[0] === photo.description.split(' ')[0]
   );
   photoJourIndex.value = photoJourIndex.value === realIndex ? null : realIndex;
+
+  photoStore.setNextPhoto(photos.value[photoJourIndex.value])
+
+  console.log(photoStore.nextPhoto)
 };
 
 const handleModeChange = newMode => {
@@ -282,11 +286,22 @@ const handleModeChange = newMode => {
   }
 };
 
+const selectRandomPhoto = () => {
+  if (photos.value.length > 0) {
+    photoJourIndex.value = Math.floor(Math.random() * photos.value.length);
+
+    photoStore.setNextPhoto(photos.value[photoJourIndex.value])
+
+    console.log(photoStore.nextPhoto)
+  }
+};
+
 watch(
   mode,
   newMode => {
     if (newMode === 'auto') {
-      photoJourIndex.value = null;
+      chargerPhoto();
+      selectRandomPhoto();
     }
   },
   { immediate: true }
