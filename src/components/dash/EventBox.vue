@@ -1,6 +1,6 @@
 <script setup>
 import { onMounted, ref } from "vue"
-import EventItem from "./EventItem..vue";
+import EventItem from "./EventItem.vue";
 
 const url = "https://dashboardisis.alwaysdata.net/api/v1/dashboard/event"
 const listEvents = ref([])

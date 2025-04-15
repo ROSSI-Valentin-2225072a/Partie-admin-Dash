@@ -1,17 +1,14 @@
-<!-- App.vue -->
 <template>
   <v-app>
-    <!-- Fond global avec éléments vectoriels -->
-    <div class="global-background">
+    <!-- Fond global avec éléments vectoriels (visible partout sauf sur le dashboard) -->
+    <div v-if="!isDashboardPage" class="global-background">
       <img src="/Elements_Vectoriels.png" class="svg-deco top-right" alt="">
       <img src="/Elements_Vectoriels.png" class="svg-deco bottom-left" alt="">
-      
     </div>
-
     
-    <!-- Écran de démarrage -->
+    <!-- Écran de démarrage (non visible sur le dashboard) -->
     <div 
-      v-if="showSplash" 
+      v-if="showSplash && !isDashboardPage" 
       class="splash-screen" 
       @click="handleSplashClick"
       @keydown="handleSplashClick"
@@ -23,10 +20,16 @@
       <div class="click-instruction">Cliquez ou appuyez sur n'importe quelle touche pour continuer</div>
     </div>
 
-    <!-- Application principale (votre code existant) -->
-    <template v-else>
+    <!-- Page dashboard sans éléments standards -->
+    <template v-if="isDashboardPage">
+      <RouterView />
+    </template>
+    
+    <!-- Application principale (avec éléments standards) -->
+    <template v-else-if="!showSplash">
       <!-- Barre de navigation -->
       <v-app-bar app color="#9059a0" density="comfortable" class="menu-bar">
+        <!-- Le contenu existant de votre barre de navigation -->
         <!-- Logo -->
         <v-img src="/logoSblanc.png" alt="Logo" max-height="40" max-width="100"></v-img>
 
@@ -107,28 +110,36 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { ref, computed, onMounted, onUnmounted, watchEffect } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 const route = useRoute();
 const router = useRouter();
 
+const isDashboardPage = computed(() => {
+  return route.path === '/PageDashboard';
+});
 
-// État pour l'écran de démarrage
 const showSplash = ref(true);
 
 const handleSplashClick = () => {
   showSplash.value = false;
-  // Rediriger vers la page d'événements
   router.push('/');
 };
+
+watchEffect(() => {
+  if (isDashboardPage.value) {
+    showSplash.value = false;
+  }
+});
 
 const menuItems = [
   { label: "Événement", to: "/PageEvenement" },
   { label: "Citations", to: "/PageCitations" },
   { label: "Photos", to: "/PagePhotos" },
   { label: "Anniversaires", to: "/PageAnniversaires" },
-  { label: "Statistiques", to: "/PageStat" }
+  { label: "Statistiques", to: "/PageStat" },
+  { label: "Dashboard", to: "/PageDashboard" }
 ];
 
 const drawer = ref(false);
@@ -163,19 +174,21 @@ onMounted(() => {
   window.addEventListener('resize', updateScreenWidth);
   updateScreenWidth();
   
-  // Ajouter un événement global pour le clic de souris
-  window.addEventListener('click', handleSplashClick, { once: true });
-  
-  // Ajouter un événement global pour n'importe quelle touche
-  window.addEventListener('keydown', (e) => {
+  // Ajouter un événement global pour le clic de souris seulement si ce n'est pas le dashboard
+  if (!isDashboardPage.value) {
+    window.addEventListener('click', handleSplashClick, { once: true });
+    
+    // Ajouter un événement global pour n'importe quelle touche
+    window.addEventListener('keydown', (e) => {
+      if (showSplash.value) {
+        handleSplashClick();
+      }
+    }, { once: true });
+    
+    // Focus sur l'élément splash pour capturer les événements clavier
     if (showSplash.value) {
-      handleSplashClick();
+      document.querySelector('.splash-screen')?.focus();
     }
-  }, { once: true });
-  
-  // Focus sur l'élément splash pour capturer les événements clavier
-  if (showSplash.value) {
-    document.querySelector('.splash-screen')?.focus();
   }
 });
 
