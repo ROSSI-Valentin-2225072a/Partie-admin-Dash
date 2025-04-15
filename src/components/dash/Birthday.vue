@@ -10,27 +10,37 @@
     </div>
 
     <div class="birthday-message">
-      Aujourd’hui, <span class="date">{{ formattedDate }}</span>,
-      <template v-if="todayBirthday">
-        c’est l’anniversaire de :<br />
-        <span class="name">{{ todayBirthday.name }}</span> 🎉
+      Aujourd'hui, <span class="date">{{ formattedDate }}</span>,
+      <template v-if="todayBirthdays.length > 0">
+        c'est l'anniversaire de :<br />
+        <template v-if="todayBirthdays.length === 1">
+          <span class="name">{{ todayBirthdays[0].lastName }}</span> 🎉
+        </template>
+        <template v-else>
+      <span v-for="(person, index) in todayBirthdays" :key="person.id">
+        <span class="name">{{ person.lastName }}</span>
+        <template v-if="index < todayBirthdays.length - 2">, </template>
+        <template v-else-if="index === todayBirthdays.length - 2"> et </template>
+        <template v-if="index === todayBirthdays.length - 1"> 🎉</template>
+      </span>
+        </template>
       </template>
       <template v-else>
-        pas d’anniversaire.
+        pas d'anniversaire.
       </template>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue"
+import {onMounted, ref} from "vue"
 
 const days = ["L", "Ma", "Me", "J", "V", "S", "D"]
 const birthdays = ref([])
 const url = "https://dashboardisis.alwaysdata.net/api/v1/dashboard/person"
 
 const today = new Date()
-const todayBirthday = ref(null)
+const todayBirthdays = ref([])
 const birthdayDays = ref([])
 
 const formattedDate = today.toLocaleDateString("fr-FR", {
@@ -38,37 +48,38 @@ const formattedDate = today.toLocaleDateString("fr-FR", {
   month: "long"
 })
 
-function loadBirthdays() {
-  const fetchOptions = { method: "GET" }
+const loadBirthdays = async () => {
+  try {
+    const response = await fetch(url, { method: "GET" });
 
-  fetch(url, fetchOptions)
-    .then((response) => response.json())
-    .then((dataJSON) => {
-      birthdays.value = dataJSON
-    })
-    .catch((error) => {
-      console.error("Erreur lors de la récupération des anniversaires : ", error)
-    })
+    birthdays.value = await response.json();
+
+  } catch (error) {
+    console.error("Erreur lors de la récupération des anniversaires : ", error);
+    return [];
+  }
 }
 
-onMounted(() => {
-  birthdays.value.forEach((person) => {
-    const bDate = new Date(person.date)
+onMounted(async () => {
 
+  await loadBirthdays()
+
+  todayBirthdays.value = []
+  birthdays.value.forEach((person) => {
+    const bDate = new Date(person.birthday)
     if (
       bDate.getDate() === today.getDate() &&
       bDate.getMonth() === today.getMonth()
     ) {
-      todayBirthday.value = person
+      todayBirthdays.value.push(person)
     }
 
-    // Détection de jours avec anniversaires ce mois-ci
     if (
       bDate.getMonth() === today.getMonth() &&
       bDate.getFullYear() === today.getFullYear()
     ) {
       const weekday = new Date(bDate).getDay()
-      birthdayDays.value.push((weekday + 6) % 7) // shift Sunday to end
+      birthdayDays.value.push((weekday + 6) % 7)
     }
   })
 })

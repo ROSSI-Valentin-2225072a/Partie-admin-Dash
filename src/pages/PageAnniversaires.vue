@@ -149,8 +149,8 @@ function ajouter() {
   if (formValide.value) {
     const [year, month, day] = nouvelleDate.value.split('-')
     const requestBody = {
-      firstName: nouveauNom.value,
-      lastName: nouveauPrenom.value,
+      firstName: nouveauPrenom.value,
+      lastName: nouveauNom.value,
       birthday: `${year}-${month}-${day}`
     }
 
@@ -168,7 +168,7 @@ function ajouter() {
 function modifier(index) {
   indexModifier.value = index
   const personne = anniversaires.value[index]
-  
+
   nouveauNom.value = personne.firstName
   nouveauPrenom.value = personne.lastName
   nouvelleDate.value = personne.birthday
@@ -456,7 +456,7 @@ onMounted(() => {
   .form-actions {
     flex-direction: column;
   }
-  
+
   .ok-btn, .cancel-btn {
     width: 100%;
     margin-bottom: 10px;

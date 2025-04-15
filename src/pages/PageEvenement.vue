@@ -47,7 +47,7 @@
 import EventsSidebar from '@/components/events/EventsSidebar.vue'
 import EventForm from '@/components/events/EventForm.vue'
 import EventsDisplay from '@/components/events/EventsDisplay'
-import { ref, onMounted } from "vue"
+import {onMounted, ref} from "vue"
 
 const url = "https://dashboardisis.alwaysdata.net/api/v1/dashboard/event"
 const showAddForm = ref(false)
@@ -68,15 +68,13 @@ const currentMonth = ref(new Date().getMonth())
 const currentYear = ref(new Date().getFullYear())
 const weekdays = ['L', 'M', 'M', 'J', 'V', 'S', 'D']
 
-function loadEvents() {
+const loadEvents = async() => {
   const fetchOptions = { method : 'GET' }
 
   fetch(url, fetchOptions)
   .then((response) => response.json())
   .then((dataJSON) => {
-    const reponse = dataJSON
-
-    events.value = reponse
+    events.value = dataJSON
 
     const typeList = dataJSON.map(
         (item) => item.type
@@ -202,7 +200,7 @@ function deleteEvent(eventId) {
       fetch(url + `/id=${eventId}`, fetchOptions)
 
       loadEvents()
-      // location.reload()
+      location.reload()
     } catch(error) {
       console.error("An error occured while deleting : ", error)
     }
@@ -264,16 +262,7 @@ onMounted(() => {
 
 
 /* Affichage des événements */
-.events-display {
-  padding: 15px;
-}
 
-.events-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
 
 .events-header h2 {
   margin: 0;
