@@ -36,7 +36,7 @@ function formatDate(dateToFormat) {
   flex-direction: column;
   gap: 8px;
   margin-bottom: 10px;
-  width: 480px;
+  width: 700px;
   margin-left: auto;
   margin-right: auto;
   height: 155px;
