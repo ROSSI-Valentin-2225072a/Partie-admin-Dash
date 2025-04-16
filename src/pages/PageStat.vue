@@ -4,43 +4,111 @@
       <!-- Barre d'application avec menu -->
       <v-app-bar app>
         <template v-slot:prepend>
-          <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
+          <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
         </template>
       </v-app-bar>
-
-      <!-- Menu latéral gauche -->
+      
       <v-navigation-drawer v-model="drawer" app>
         <v-card class="pa-4" elevation="2">
           <v-list nav dense>
-            <!-- Bouton "Événement" -->
+            <!-- Groupe "Événement" -->
             <v-list-group v-model="eventOpen" prepend-icon="mdi-calendar">
               <template v-slot:activator="{ props }">
-                <v-list-item v-bind="props" title="Evenement" />
+                <v-list-item v-bind="props">
+                  <v-list-item-title>Événement</v-list-item-title>
+                </v-list-item>
               </template>
-              <v-list-item title="Diagramme circulaire" @click="pageActive = 'eventcirc'" />
-              <v-list-item title="Diagramme en bas tongs" @click="pageActive = 'eventbaton'" />
-            </v-list-group> 
-
-            <!-- Bouton "Photo" avec sous-menus -->
-            <v-list-group v-model="photoOpen" prepend-icon="mdi-camera">
-              <template v-slot:activator="{ props }">
-                <v-list-item v-bind="props" title="Photo" />
-              </template>
-              <v-list-item title="La plus affichée" @click="pageActive = 'photoMost'" />
-              <v-list-item title="La moins affichée" @click="pageActive = 'photoLeast'" />
+              <v-list-item
+                @click="pageActive = 'eventcirc'"
+                :class="{ 'active-item': pageActive === 'eventcirc' }"
+              >
+                <v-list-item-icon v-if="pageActive === 'eventcirc'">
+                  <v-icon color="green">mdi-check</v-icon>
+                </v-list-item-icon>
+                <v-list-item-content>
+                  <v-list-item-title>Diagramme circulaire</v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+              <v-list-item
+                @click="pageActive = 'eventbaton'"
+                :class="{ 'active-item': pageActive === 'eventbaton' }"
+              >
+                <v-list-item-icon v-if="pageActive === 'eventbaton'">
+                  <v-icon color="green">mdi-check</v-icon>
+                </v-list-item-icon>
+                <v-list-item-content>
+                  <v-list-item-title>Diagramme bâton</v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
             </v-list-group>
 
-            <!-- Bouton "Citation" -->
+
+            <!-- Groupe "Photo" -->
+            <v-list-group v-model="photoOpen" prepend-icon="mdi-camera">
+              <template v-slot:activator="{ props }">
+                <v-list-item v-bind="props">
+                  <v-list-item-title>Photo</v-list-item-title>
+                </v-list-item>
+              </template>
+              <v-list-item
+                @click="pageActive = 'photoMost'"
+                :class="{ 'active-item': pageActive === 'photoMost' }"
+              >
+                <v-list-item-icon v-if="pageActive === 'photoMost'">
+                  <v-icon color="green">mdi-check</v-icon>
+                </v-list-item-icon>
+                <v-list-item-content>
+                  <v-list-item-title>La plus affichée</v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+              <v-list-item
+                @click="pageActive = 'photoLeast'"
+                :class="{ 'active-item': pageActive === 'photoLeast' }"
+              >
+                <v-list-item-icon v-if="pageActive === 'photoLeast'">
+                  <v-icon color="green">mdi-check</v-icon>
+                </v-list-item-icon>
+                <v-list-item-content>
+                  <v-list-item-title>La moins affichée</v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+            </v-list-group>
+
+
+            <!-- Groupe "Citation" -->
             <v-list-group v-model="quoteOpen" prepend-icon="mdi-format-quote-close">
               <template v-slot:activator="{ props }">
-                <v-list-item v-bind="props" title="Citation" />
+                <v-list-item v-bind="props">
+                  <v-list-item-title>Citation</v-list-item-title>
+                </v-list-item>
               </template>
-              <v-list-item title="La plus affichée" @click="pageActive = 'quoteMost'" />
-              <v-list-item title="La moins affichée" @click="pageActive = 'quoteLeast'" />
+              <v-list-item
+                @click="pageActive = 'quoteMost'"
+                :class="{ 'active-item': pageActive === 'quoteMost' }"
+              >
+                <v-list-item-icon v-if="pageActive === 'quoteMost'">
+                  <v-icon color="green">mdi-check</v-icon>
+                </v-list-item-icon>
+                <v-list-item-content>
+                  <v-list-item-title>La plus affichée</v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+              <v-list-item
+                @click="pageActive = 'quoteLeast'"
+                :class="{ 'active-item': pageActive === 'quoteLeast' }"
+              >
+                <v-list-item-icon v-if="pageActive === 'quoteLeast'">
+                  <v-icon color="green">mdi-check</v-icon>
+                </v-list-item-icon>
+                <v-list-item-content>
+                  <v-list-item-title>La moins affichée</v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
             </v-list-group>
           </v-list>
         </v-card>
       </v-navigation-drawer>
+
 
       <!-- Contenu principal -->
       <v-col cols="12" md="9">
@@ -56,6 +124,7 @@
   </v-container>
 </template>
 
+
 <script setup>
 import { ref } from 'vue';
 import PageStatPhotoMost from './PageStatPhotoMost.vue';
@@ -63,16 +132,21 @@ import PageStatPhotoLeast from './PageStatPhotoLeast.vue';
 import PageStatEventCirc from './PageStatEventCirc.vue';
 import PageStatEventBaton from './PageStatEventBaton.vue';
 import PageStatCitation from './PageStatCitation.vue';
-import PageStatQuoteMost from './PageStatQuoteMost.vue'; // Importer les composants
+import PageStatQuoteMost from './PageStatQuoteMost.vue';
 import PageStatQuoteLeast from './PageStatQuoteLeast.vue';
 
+
 const drawer = ref(false);
-const pageActive = ref(null); // Page par défaut null
-const photoOpen = ref(false); // Gère l'ouverture du sous-menu photo
+const pageActive = ref(null); // Aucun élément sélectionné par défaut
+const photoOpen = ref(false);
 const eventOpen = ref(false);
 const quoteOpen = ref(false);
 </script>
 
+
 <style scoped>
-/* Vous pouvez ajouter des styles spécifiques à cette page ici */
+.active-item {
+  background-color: #f0e6f5; /* Fond différent pour l'élément sélectionné */
+  border-left: 4px solid #9059a0;
+}
 </style>

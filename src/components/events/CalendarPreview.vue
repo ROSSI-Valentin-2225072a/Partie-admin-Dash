@@ -137,15 +137,6 @@ onMounted(() => {
   font-weight: 500;
 }
 
-.calendar-nav-btn {
-  background: none;
-  border: none;
-  color: white;
-  cursor: pointer;
-  padding: 0 5px;
-  font-size: 14px;
-}
-
 .calendar-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);

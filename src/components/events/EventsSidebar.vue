@@ -36,7 +36,7 @@
         v-for="period in periodOptions"
         :key="period.value"
         :value="period.value"
-        >
+        class="period-btn">
         {{ period.label }}
         </v-btn>
     </v-btn-toggle>
@@ -84,9 +84,10 @@ const props = defineProps([
   gap: 20px;
 }
 
+/* Style pour le bouton d'ajout d'événement */
 .add-event-btn {
-  background-color: #673ab7;
-  color: #fff;
+  background-color: #673ab7 ;
+  color: #fff ;
   font-weight: 600;
   border-radius: 8px;
   padding: 12px 16px;
@@ -96,12 +97,14 @@ const props = defineProps([
 }
 
 .add-event-btn:hover {
-  background-color: #7e57c2;
+  background-color: #7e57c2 ;
   transform: translateY(-2px);
   box-shadow: 0 6px 12px rgba(103, 58, 183, 0.3);
 }
 
+/* Style pour la carte de filtres */
 .filters-card {
+  flex-shrink: 0;
   background-color: #fafafa;
   padding: 16px;
   border-radius: 10px;
@@ -123,10 +126,12 @@ const props = defineProps([
   margin-bottom: 8px;
 }
 
+/* Style pour les options de filtre */
 .filter-options {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  margin-bottom: 16px;
 }
 
 .v-chip {
@@ -156,8 +161,10 @@ const props = defineProps([
   width: 10px;
   height: 10px;
   border-radius: 50%;
+  margin-right: 4px;
 }
 
+/* Couleurs pour les points des événements */
 .dot-vie {
   background-color: #4caf50;
 }
@@ -172,38 +179,49 @@ const props = defineProps([
 }
 
 .period-buttons {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 10px;
+  display: grid ;
+  grid-template-columns: 1fr 1fr ;
+  gap: 8px ;
+  margin-bottom: 12px ;
+  border: none ;
+  background: transparent ;
+  flex-wrap: wrap ;
 }
 
-.v-btn-toggle {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
+.period-buttons .v-btn {
+  height: 32px ;
+  min-width: 0 ;
+  padding: 0 8px ;
+  font-size: 12px ;
+  border-radius: 6px ;
+  background-color: #f5f5f5 ;
+  color: #333 ;
+  text-transform: none ;
+  box-shadow: none ;
+  font-weight: normal ;
+  margin: 0 ;
 }
 
-.v-btn {
-  min-width: 90px;
-  padding: 8px 10px;
-  font-size: 13px;
-  background-color: #f5f5f5;
-  color: #333;
-  border-radius: 6px;
-  text-align: center;
-  transition: all 0.2s ease;
+.period-buttons .v-btn:hover {
+  background-color: #ede7f6 ;
 }
 
-.v-btn:hover {
-  background-color: #ede7f6;
+.period-buttons .v-btn--active {
+  background-color: #ede7f6 ;
+  border: 1px solid #673ab7 ;
+  font-weight: 600 ;
+  color: #673ab7 ;
 }
 
-.v-btn--active {
-  background-color: #ede7f6 !important;
-  border: 1px solid #673ab7;
-  font-weight: 600;
-  color: #673ab7 !important;
-}
+/* Styles pour les petits écrans */
+@media (max-width: 320px) {
+  .events-sidebar {
+    width: 100%;
+    padding: 15px 8px;
+  }
 
+  .period-buttons {
+    grid-template-columns: 1fr ;
+  }
+}
 </style>

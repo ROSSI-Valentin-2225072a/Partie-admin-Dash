@@ -62,9 +62,9 @@ const periodFilter = ref('all')
 const selectedEvent = ref(null)
 const periodOptions = [
     { label: 'Tous', value: 'all' },
-    { label: 'Aujourd\'hui', value: 'today' },
-    { label: 'Cette semaine', value: 'week' },
-    { label: 'Ce mois', value: 'month' }
+    { label: 'Auj.', value: 'today' },
+    { label: 'Semaine', value: 'week' },
+    { label: 'Mois', value: 'month' }
   ]
 const tags = ref([])
 const currentMonth = ref(new Date().getMonth())

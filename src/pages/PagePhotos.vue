@@ -27,7 +27,6 @@
       </div>
     </v-card>
 
-    <!-- Galerie et sélection -->
     <v-card class="photo-panel" elevation="3">
       <div class="top-bar">
         <v-btn
@@ -234,14 +233,11 @@ const validerAjoutPhoto = async() => {
   }
 };
 
-// Fonction pour convertir une image en base64
 const convertirImageEnBase64 = (fichier) => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
 
     reader.onload = () => {
-      // Le résultat est une chaîne en base64 avec le préfixe "data:image/jpeg;base64,"
-      // Vous pouvez soit conserver ce préfixe, soit l'enlever selon vos besoins
       resolve(reader.result);
     };
 
@@ -296,6 +292,16 @@ const selectRandomPhoto = () => {
   }
 };
 
+function preSelectPhoto() {
+  if (photoStore.nextPhoto !== null) {
+    filtrerPhotos.value.forEach((photo, index) => {
+      if (photo.photoName === photoStore.nextPhoto.photoName) {
+        photoJourIndex.value = index;
+      }
+    });
+  }
+}
+
 watch(
   mode,
   newMode => {
@@ -307,9 +313,10 @@ watch(
   { immediate: true }
 );
 
-// Charger les photos depuis l'API
 onMounted(async () => {
   await chargerPhoto();
+
+  preSelectPhoto();
 });
 </script>
 
@@ -323,7 +330,6 @@ onMounted(async () => {
   min-height: 100vh;
 }
 
-/* Styles existants */
 .photo-mode {
   background-color: white;
   border-radius: 16px;
@@ -364,7 +370,6 @@ onMounted(async () => {
   margin: 0;
 }
 
-/* Panneau photo */
 .photo-panel {
   background-color: white;
   border-radius: 16px;
@@ -496,7 +501,6 @@ onMounted(async () => {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-/* Styles pour le dialog et sa validation */
 .dialog-card {
   border-radius: 20px;
   overflow: hidden;
@@ -520,7 +524,6 @@ onMounted(async () => {
   padding: 8px 16px;
 }
 
-/* Responsive */
 @media (max-width: 960px) {
   .photos-page {
     grid-template-columns: 1fr;
