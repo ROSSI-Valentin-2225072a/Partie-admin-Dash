@@ -30,7 +30,7 @@
         :value="periodFilter"
         mandatory
         class="period-buttons"
-        @change="$emit('changePeriod', $event)"
+        @update:modelValue="$emit('changePeriod', $event)"
     >
         <v-btn
         v-for="period in periodOptions"
@@ -57,7 +57,7 @@
 
 <script setup>
 import CalendarPreview from './CalendarPreview.vue'
-import {defineProps} from "vue"
+import { defineProps } from "vue"
 
 const props = defineProps([
   "activeFilters",
@@ -70,7 +70,6 @@ const props = defineProps([
   "weekdays",
   "events"
 ]);
-
 </script>
 
 <style scoped>

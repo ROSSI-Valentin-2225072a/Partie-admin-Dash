@@ -11,7 +11,7 @@
       :weekdays="weekdays"
       :events="events"
       @toggleFilter="toggleFilter"
-      @changePeriod="periodFilter = $event"
+      @changePeriod="changingPeriod"
       @prev-month="prevMonth"
       @nextMonth="nextMonth"
       @selectDay="selectDay"
@@ -211,6 +211,10 @@ function deleteEvent(eventId) {
       console.error("An error occured while deleting : ", error)
     }
   }
+}
+
+function changingPeriod(period) {
+  periodFilter.value = period
 }
 
 onMounted(async () => {

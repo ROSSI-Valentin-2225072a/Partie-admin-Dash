@@ -33,7 +33,7 @@
 import EventsHeader from './EventsHeader.vue'
 import EventsGrid from './EventsGrid.vue'
 import EventsList from './EventsList.vue'
-import { ref, computed, defineProps, defineEmits } from "vue"
+import {computed, defineEmits, defineProps, ref} from "vue"
 
 const props = defineProps([
   "events",
@@ -51,33 +51,32 @@ const viewMode = ref('grid')
 
 const filteredEvents = computed(() => {
 
-  if (!searchQuery.value.trim() && props.activeFilters.length === 0) return props.events;
+  if (!searchQuery.value.trim() && props.activeFilters.length === 0 && props.periodFilter === "all") return props.events;
 
   const termeLowerCase = searchQuery.value.toLowerCase().trim();
 
-  const filteredBySearch =  props.events.filter((event) =>
+  const filteredByPeriod = props.events.filter((event) =>
+    filterByPeriod(event)
+  )
+
+  const filteredBySearch =  filteredByPeriod.filter((event) =>
     event.nomEvent.toLowerCase().includes(termeLowerCase)
   )
 
-  console.log("filtered events", filteredBySearch)
-  /*
-  props.events.filter((event) =>
-    filterByPeriod(event)
-  )
-   */
   let filteredByTag = filteredBySearch
   if (props.activeFilters.length !== 0) {
     filteredByTag = filteredBySearch.filter((event) =>
       props.activeFilters.includes(event.type.libelle)
     )
   }
+
   return filteredByTag
 })
 
 function filterByPeriod(event) {
   if (props.periodFilter === 'all') return true
   const today = new Date()
-  const eventDate = new Date(event.date)
+  const eventDate = new Date(event.dateEvent)
   if (props.periodFilter === 'today') {
     return eventDate.toDateString() === today.toDateString()
   }
