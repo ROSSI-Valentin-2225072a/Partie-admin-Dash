@@ -6,7 +6,7 @@
         <v-icon>mdi-close</v-icon>
       </v-btn>
     </v-card-title>
-    
+
     <v-card-text>
       <v-form ref="form" v-model="valid">
         <v-text-field
@@ -15,7 +15,7 @@
           required
           :rules="titleRules"
         ></v-text-field>
-        
+
         <v-select
           v-model="event.type.libelle"
           :items="eventTypes"
@@ -24,7 +24,7 @@
           label="Type d'événement"
           required
         ></v-select>
-        
+
         <v-row>
           <v-col cols="6">
             <v-date-picker
@@ -34,12 +34,12 @@
             ></v-date-picker>
           </v-col>
         </v-row>
-        
+
         <v-text-field
           v-model="event.lieu"
           label="Lieu"
         ></v-text-field>
-        
+
         <v-textarea
           v-model="event.description"
           label="Description"
@@ -47,7 +47,7 @@
         ></v-textarea>
       </v-form>
     </v-card-text>
-    
+
     <v-card-actions>
       <v-spacer></v-spacer>
       <v-btn
@@ -100,3 +100,28 @@ const titleRules = [
 }
 
 </script>
+
+<style scoped>
+
+.close-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+}
+
+@keyframes formShow {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.form-card {
+  animation: formShow 0.3s ease-out forwards;
+}
+
+</style>
