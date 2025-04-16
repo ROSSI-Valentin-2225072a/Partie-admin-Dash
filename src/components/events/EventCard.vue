@@ -11,10 +11,9 @@
       <v-card-text class="event-content">
         <div class="event-header">
           <v-chip
-            :color="getEventTypeColor(event.type.libelle)"
-            size="small"
             class="event-type-badge"
           >
+            <v-avatar start :class="`dot-${getEventTypeColor(event.type.libelle)}`"></v-avatar>
             {{ event.type.libelle }}
           </v-chip>
         </div>
@@ -47,7 +46,7 @@
 <script setup>
 import { defineProps } from "vue"
 
-const props = defineProps(["event", "eventTypes"])
+const props = defineProps(["event", "eventTypes", "tags"])
 
 
 function getDayNumber(date) {
@@ -59,14 +58,8 @@ function getMonthShort(date) {
     return monthNames[new Date(date).getMonth()]
 }
 
-function getEventTypeColor(type) {
-    const colors = {
-        meeting: 'blue',
-        training: 'green',
-        conference: 'purple',
-        other: 'grey'
-    }
-    return colors[type] || 'grey'
+function getEventTypeColor(libelle) {
+  return props.tags.find(type => type.libelle === libelle)?.tag || 'default'
 }
 
 </script>
@@ -164,6 +157,25 @@ function getEventTypeColor(type) {
 
 .action-btn:hover {
   color: #1f2937;
+}
+
+.dot-vie {
+  background-color: #4caf50;
+}
+.dot-conference {
+  background-color: #2196f3;
+}
+.dot-interne {
+  background-color: #ff9800;
+}
+.dot-pedagogique {
+  background-color: #9c27b0;
+}
+
+.v-avatar {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
 }
 
 </style>

@@ -34,6 +34,7 @@
         :viewMode="viewMode"
         :activeFilters="activeFilters"
         :periodFilter="periodFilter"
+        :tags="tags"
         @update:searchQuery="searchQuery = $event"
         @update:viewMode="viewMode = $event"
         @selectEvent="selectEvent"

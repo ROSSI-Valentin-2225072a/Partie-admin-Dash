@@ -9,6 +9,7 @@
       v-if="viewMode === 'grid'"
       :events="filteredEvents"
       :eventTypes="eventTypes"
+      :tags="tags"
       @selectEvent="$emit('selectEvent', $event)"
       @viewEvent="$emit('viewEvent', $event)"
       @editEvent="$emit('editEvent', $event)"
@@ -19,6 +20,7 @@
       v-else
       :events="filteredEvents"
       :eventTypes="eventTypes"
+      :tags="tags"
       @selectEvent="$emit('selectEvent', $event)"
       @viewEvent="$emit('viewEvent', $event)"
       @editEvent="$emit('editEvent', $event)"
@@ -37,7 +39,8 @@ const props = defineProps([
   "events",
   "activeFilters",
   "periodFilter",
-  "eventTypes"
+  "eventTypes",
+  "tags"
 ])
 
 const emit = defineEmits(['viewEvent', 'editEvent', 'deleteEvent'])

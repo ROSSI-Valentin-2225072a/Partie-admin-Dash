@@ -11,6 +11,7 @@
       <EventCard
         :event="event"
         :eventTypes="eventTypes"
+        :tags="tags"
         @select="$emit('selectEvent', event.id)"
         @view="$emit('viewEvent', event)"
         @edit="$emit('editEvent', event)"
@@ -25,7 +26,7 @@
 import EventCard from './EventCard.vue'
 import { defineProps } from "vue"
 
-const props = defineProps(["events", "eventTypes"])
+const props = defineProps(["events", "eventTypes", "tags"])
 
 </script>
 

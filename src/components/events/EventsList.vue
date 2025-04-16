@@ -19,10 +19,10 @@
         <td>{{ formatDateShort(event.dateEvent) }}</td>
         <td>
         <v-chip
-            :color="getEventTypeColor(event.type.libelle)"
             size="x-small"
             class="event-type-badge small"
         >
+          <v-avatar start :class="`dot-${getEventTypeColor(event.type.libelle)}`"></v-avatar>
             {{ event.type.libelle }}
         </v-chip>
         </td>
@@ -50,21 +50,38 @@
 <script setup>
 import { defineProps } from "vue"
 
-const props = defineProps(["events", "eventTypes"])
+const props = defineProps(["events", "eventTypes", "tags"])
 
 function formatDateShort(date) {
     const d = new Date(date)
     return `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`
 }
 
-function getEventTypeColor(type) {
-    const colors = {
-        meeting: 'blue',
-        training: 'green',
-        conference: 'purple',
-        other: 'grey'
-    }
-    return colors[type] || 'grey'
+function getEventTypeColor(libelle) {
+  return props.tags.find(type => type.libelle === libelle)?.tag || 'default'
 }
 
 </script>
+
+<style scoped>
+
+.dot-vie {
+  background-color: #4caf50;
+}
+.dot-conference {
+  background-color: #2196f3;
+}
+.dot-interne {
+  background-color: #ff9800;
+}
+.dot-pedagogique {
+  background-color: #9c27b0;
+}
+
+.v-avatar {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+</style>
