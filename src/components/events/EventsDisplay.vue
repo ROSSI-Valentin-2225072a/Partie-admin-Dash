@@ -1,43 +1,3 @@
-<template>
-  <div class="events-display">
-    <EventsHeader
-      v-model:searchQuery="searchQuery"
-      v-model:viewMode="viewMode"
-    />
-
-    <EventsGrid
-      v-if="viewMode === 'grid'"
-      :events="filteredEvents"
-      :eventTypes="eventTypes"
-      :tags="tags"
-      @selectEvent="$emit('selectEvent', $event)"
-      @viewEvent="handleViewEvent"
-      @editEvent="$emit('editEvent', $event)"
-      @deleteEvent="$emit('deleteEvent', $event)"
-    />
-
-    <EventsList
-      v-else
-      :events="filteredEvents"
-      :eventTypes="eventTypes"
-      :tags="tags"
-      @selectEvent="$emit('selectEvent', $event)"
-      @viewEvent="handleViewEvent"
-      @editEvent="$emit('editEvent', $event)"
-      @deleteEvent="$emit('deleteEvent', $event)"
-    />
-
-    <EventViewer
-      v-if="selectedEvent"
-      :event="selectedEvent"
-      :visible="isViewerVisible"
-      @close="closeEventViewer"
-      @editEvent="handleEditEvent"
-      @deleteEvent="handleDeleteEvent"
-    />
-  </div>
-</template>
-
 <script setup>
 import EventsHeader from './EventsHeader.vue'
 import EventsGrid from './EventsGrid.vue'
@@ -69,13 +29,11 @@ function handleViewEvent(event) {
 
 function closeEventViewer() {
   isViewerVisible.value = false
-  // Optionnel : on peut ajouter un délai avant de vider l'événement pour une meilleure animation
   setTimeout(() => {
     selectedEvent.value = null
   }, 300)
 }
 
-// Fonctions pour gérer les actions depuis le visualiseur d'événements
 function handleEditEvent(event) {
   closeEventViewer()
   emit('editEvent', event)
@@ -132,6 +90,46 @@ function filterByPeriod(event) {
   return true
 }
 </script>
+
+<template>
+  <div class="events-display">
+    <EventsHeader
+      v-model:searchQuery="searchQuery"
+      v-model:viewMode="viewMode"
+    />
+
+    <EventsGrid
+      v-if="viewMode === 'grid'"
+      :events="filteredEvents"
+      :eventTypes="eventTypes"
+      :tags="tags"
+      @selectEvent="$emit('selectEvent', $event)"
+      @viewEvent="handleViewEvent"
+      @editEvent="$emit('editEvent', $event)"
+      @deleteEvent="$emit('deleteEvent', $event)"
+    />
+
+    <EventsList
+      v-else
+      :events="filteredEvents"
+      :eventTypes="eventTypes"
+      :tags="tags"
+      @selectEvent="$emit('selectEvent', $event)"
+      @viewEvent="handleViewEvent"
+      @editEvent="$emit('editEvent', $event)"
+      @deleteEvent="$emit('deleteEvent', $event)"
+    />
+
+    <EventViewer
+      v-if="selectedEvent"
+      :event="selectedEvent"
+      :visible="isViewerVisible"
+      @close="closeEventViewer"
+      @editEvent="handleEditEvent"
+      @deleteEvent="handleDeleteEvent"
+    />
+  </div>
+</template>
 
 <style scoped>
 .events-display {
