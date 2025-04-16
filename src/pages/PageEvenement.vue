@@ -41,6 +41,7 @@
         @viewEvent="viewEvent"
         @editEvent="editEvent"
         @deleteEvent="deleteEvent"
+        @saveEvent="saveEvent"
       />
     </div>
   </div>
@@ -77,6 +78,8 @@ const loadEvents = async() => {
   const reponse = await fetch(url, fetchOptions)
 
   events.value = await reponse.json()
+
+  events.value.sort((a, b) => new Date(a.dateEvent) - new Date(b.dateEvent));
 
   const typeList = events.value.map(
     (item) => item.type
@@ -193,6 +196,23 @@ function editEvent(event) {
   console.log(event)
 }
 
+function saveEvent(event) {
+  const fetchOptions = {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(event)
+  }
+  console.log(event.id)
+  try {
+    fetch(url + `/id=${event.id}`, fetchOptions)
+    location.reload()
+  } catch (error) {
+    console.error("An error occured while saving : ", error)
+  }
+}
+
 function deleteEvent(eventId) {
   const fetchOptions = {
     method : 'DELETE'
@@ -244,21 +264,6 @@ onMounted(async () => {
   position: relative;
 }
 
-.events-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px;
-  border-bottom: 1px solid #eee;
-}
-
-.events-header h2 {
-  margin: 0;
-  color: #333;
-  font-size: 20px;
-}
-
-/* Colonne principale */
 .events-main {
   flex: 1;
   background-color: #f9f9fb;
@@ -267,12 +272,6 @@ onMounted(async () => {
   overflow-y: auto;
   height: 100%;
 }
-
-/* Formulaire d'ajout/modification */
-
-
-/* Affichage des événements */
-
 
 .events-header h2 {
   margin: 0;
@@ -298,25 +297,6 @@ onMounted(async () => {
   box-shadow: 0 0 0 2px rgba(103, 58, 183, 0.1);
 }
 
-/* Vue Grille */
-
-
-.event-border-vie {
-  border-left: 4px solid #2196f3;
-}
-
-.event-border-conference {
-  border-left: 4px solid #ff9800;
-}
-
-.event-border-interne {
-  border-left: 4px solid #4caf50;
-}
-
-.event-border-pedagogique {
-  border-left: 4px solid #e91e63;
-}
-
 .event-date-badge {
   background-color: #f5f5f5;
   padding: 10px;
@@ -328,28 +308,9 @@ onMounted(async () => {
   text-align: center;
 }
 
-.event-day {
-  font-size: 22px;
-  font-weight: 700;
-  line-height: 1;
-}
-
-.event-month {
-  font-size: 13px;
-  text-transform: uppercase;
-  margin-top: 4px;
-}
-
 .event-content {
   padding: 15px;
   flex: 1;
-}
-
-.event-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 8px;
 }
 
 .event-type-badge {
@@ -613,49 +574,6 @@ onMounted(async () => {
   font-size: 14px;
   line-height: 1.6;
   color: #666;
-}
-
-.detail-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  margin-top: 20px;
-}
-
-.btn-edit {
-  background-color: #2196f3;
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 6px;
-  font-weight: 500;
-  cursor: pointer;
-}
-
-.btn-delete {
-  background-color: #f44336;
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 6px;
-  font-weight: 500;
-  cursor: pointer;
-}
-
-.btn-close {
-  background-color: #757575;
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 6px;
-  font-weight: 500;
-  cursor: pointer;
-}
-
-.close-btn {
-  position: absolute;
-  top: 15px;
-  right: 15px;
 }
 
 /* Animation du formulaire */

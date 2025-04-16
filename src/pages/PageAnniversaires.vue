@@ -217,6 +217,7 @@ function annulerModification() {
 
 function resetForm() {
   nouveauNom.value = ""
+  nouveauPrenom.value = ""
   nouvelleDate.value = ""
   ajouterAnniversaire.value = false
   modifierAnniversaire.value = false

@@ -84,7 +84,6 @@ const props = defineProps([
   gap: 20px;
 }
 
-/* Style pour le bouton d'ajout d'événement */
 .add-event-btn {
   background-color: #673ab7 ;
   color: #fff ;
@@ -102,7 +101,6 @@ const props = defineProps([
   box-shadow: 0 6px 12px rgba(103, 58, 183, 0.3);
 }
 
-/* Style pour la carte de filtres */
 .filters-card {
   flex-shrink: 0;
   background-color: #fafafa;
@@ -126,7 +124,6 @@ const props = defineProps([
   margin-bottom: 8px;
 }
 
-/* Style pour les options de filtre */
 .filter-options {
   display: flex;
   flex-direction: column;
@@ -164,7 +161,6 @@ const props = defineProps([
   margin-right: 4px;
 }
 
-/* Couleurs pour les points des événements */
 .dot-vie {
   background-color: #4caf50;
 }
@@ -213,7 +209,6 @@ const props = defineProps([
   color: #673ab7 ;
 }
 
-/* Styles pour les petits écrans */
 @media (max-width: 320px) {
   .events-sidebar {
     width: 100%;

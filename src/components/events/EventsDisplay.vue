@@ -3,6 +3,7 @@ import EventsHeader from './EventsHeader.vue'
 import EventsGrid from './EventsGrid.vue'
 import EventsList from './EventsList.vue'
 import EventViewer from './EventViewer.vue'
+import EventEditor from './EventEditor.vue'
 import {computed, defineEmits, defineProps, ref} from "vue"
 
 const props = defineProps([
@@ -13,13 +14,16 @@ const props = defineProps([
   "tags"
 ])
 
-const emit = defineEmits(['selectEvent', 'viewEvent', 'editEvent', 'deleteEvent'])
+const emit = defineEmits(['selectEvent', 'viewEvent', 'editEvent', 'deleteEvent', 'saveEvent'])
 
 const searchQuery = ref('')
 const viewMode = ref('grid')
 
 const selectedEvent = ref(null)
 const isViewerVisible = ref(false)
+
+const editingEvent = ref(null)
+const isEditorVisible = ref(false)
 
 function handleViewEvent(event) {
   selectedEvent.value = event
@@ -35,8 +39,25 @@ function closeEventViewer() {
 }
 
 function handleEditEvent(event) {
-  closeEventViewer()
+  if (isViewerVisible.value) {
+    closeEventViewer()
+  }
+
+  editingEvent.value = event
+  isEditorVisible.value = true
   emit('editEvent', event)
+}
+
+function closeEventEditor() {
+  isEditorVisible.value = false
+  setTimeout(() => {
+    editingEvent.value = null
+  }, 300)
+}
+
+function saveEvent(event) {
+  closeEventEditor()
+  emit('saveEvent', event)
 }
 
 function handleDeleteEvent(event) {
@@ -105,7 +126,7 @@ function filterByPeriod(event) {
       :tags="tags"
       @selectEvent="$emit('selectEvent', $event)"
       @viewEvent="handleViewEvent"
-      @editEvent="$emit('editEvent', $event)"
+      @editEvent="handleEditEvent"
       @deleteEvent="$emit('deleteEvent', $event)"
     />
 
@@ -116,7 +137,7 @@ function filterByPeriod(event) {
       :tags="tags"
       @selectEvent="$emit('selectEvent', $event)"
       @viewEvent="handleViewEvent"
-      @editEvent="$emit('editEvent', $event)"
+      @editEvent="handleEditEvent"
       @deleteEvent="$emit('deleteEvent', $event)"
     />
 
@@ -127,6 +148,15 @@ function filterByPeriod(event) {
       @close="closeEventViewer"
       @editEvent="handleEditEvent"
       @deleteEvent="handleDeleteEvent"
+    />
+
+    <EventEditor
+      :event="editingEvent"
+      :visible="isEditorVisible"
+      :eventTypes="eventTypes"
+      :tags="tags"
+      @close="closeEventEditor"
+      @save="saveEvent"
     />
   </div>
 </template>

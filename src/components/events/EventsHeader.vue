@@ -43,5 +43,11 @@ const emit = defineEmits(['update:searchQuery', 'update:viewMode'])
 
 <style scoped>
 
+.events-header h2 {
+  margin: 0;
+  color: #333;
+  font-size: 20px;
+  padding: 8px;
+}
 
 </style>
