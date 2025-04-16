@@ -1,59 +1,3 @@
-<template>
-  <div>
-    <!-- Section événement du mois -->
-    <div class="next-event-section" v-if="selectedNextEvent">
-      <v-card class="next-event-card">
-        <v-card-title class="d-flex justify-space-between align-center">
-          <span>Événement à venir</span>
-          <v-btn size="small" variant="text" density="compact" @click="clearNextEvent">
-            <v-icon>mdi-close</v-icon>
-          </v-btn>
-        </v-card-title>
-        <v-card-text>
-          <div class="d-flex align-center mb-2">
-            <v-chip
-              size="x-small"
-              class="event-type-badge small mr-2"
-            >
-              <v-avatar start :class="`dot-${getEventTypeColor(selectedNextEvent.type.libelle)}`"></v-avatar>
-              {{ selectedNextEvent.type.libelle }}
-            </v-chip>
-            <span class="text-body-2">{{ formatDateShort(selectedNextEvent.dateEvent) }}</span>
-          </div>
-          <div class="text-h6">{{ selectedNextEvent.nomEvent }}</div>
-          <div v-if="selectedNextEvent.lieu" class="text-body-2 mt-1">
-            <v-icon size="small">mdi-map-marker</v-icon> {{ selectedNextEvent.lieu }}
-          </div>
-        </v-card-text>
-      </v-card>
-    </div>
-
-    <!-- Grille d'événements -->
-    <v-row class="events-grid">
-      <v-col
-        v-for="event in events"
-        :key="event.id"
-        cols="12"
-        sm="6"
-        md="4"
-        lg="3"
-      >
-        <EventCard
-          :event="event"
-          :eventTypes="eventTypes"
-          :tags="tags"
-          :isNextEvent="isSelectedAsNext(event)"
-          @select="$emit('selectEvent', event.id)"
-          @view="$emit('viewEvent', event)"
-          @edit="$emit('editEvent', event)"
-          @delete="$emit('deleteEvent', event.id)"
-          @set-next="setAsNextEvent(event)"
-        />
-      </v-col>
-    </v-row>
-  </div>
-</template>
-
 <script setup>
 import EventCard from './EventCard.vue'
 import { defineProps, defineEmits, computed, onMounted, watch } from "vue"
@@ -133,6 +77,62 @@ function findCurrentMonthEvents() {
   return monthEvents.sort((a, b) => new Date(a.dateEvent) - new Date(b.dateEvent));
 }
 </script>
+
+<template>
+  <div>
+    <!-- Section événement du mois -->
+    <div class="next-event-section" v-if="selectedNextEvent">
+      <v-card class="next-event-card">
+        <v-card-title class="d-flex justify-space-between align-center">
+          <span>Événement à venir</span>
+          <v-btn size="small" variant="text" density="compact" @click="clearNextEvent">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </v-card-title>
+        <v-card-text>
+          <div class="d-flex align-center mb-2">
+            <v-chip
+              size="x-small"
+              class="event-type-badge small mr-2"
+            >
+              <v-avatar start :class="`dot-${getEventTypeColor(selectedNextEvent.type.libelle)}`"></v-avatar>
+              {{ selectedNextEvent.type.libelle }}
+            </v-chip>
+            <span class="text-body-2">{{ formatDateShort(selectedNextEvent.dateEvent) }}</span>
+          </div>
+          <div class="text-h6">{{ selectedNextEvent.nomEvent }}</div>
+          <div v-if="selectedNextEvent.lieu" class="text-body-2 mt-1">
+            <v-icon size="small">mdi-map-marker</v-icon> {{ selectedNextEvent.lieu }}
+          </div>
+        </v-card-text>
+      </v-card>
+    </div>
+
+    <!-- Grille d'événements -->
+    <v-row class="events-grid">
+      <v-col
+        v-for="event in events"
+        :key="event.id"
+        cols="12"
+        sm="6"
+        md="4"
+        lg="3"
+      >
+        <EventCard
+          :event="event"
+          :eventTypes="eventTypes"
+          :tags="tags"
+          :isNextEvent="isSelectedAsNext(event)"
+          @select="$emit('selectEvent', event.id)"
+          @view="$emit('viewEvent', event)"
+          @edit="$emit('editEvent', event)"
+          @delete="$emit('deleteEvent', event.id)"
+          @set-next="setAsNextEvent(event)"
+        />
+      </v-col>
+    </v-row>
+  </div>
+</template>
 
 <style scoped>
 .next-event-section {

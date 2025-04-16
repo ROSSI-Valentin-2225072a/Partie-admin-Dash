@@ -1,3 +1,37 @@
+<script setup>
+import { ref, defineProps } from "vue";
+
+const props = defineProps(["eventTypes"])
+const emit = defineEmits(['close', 'add-event']);
+
+const form = ref(null)
+const valid = ref(false)
+
+const event = ref({
+    nomEvent: '',
+    type: {libelle: ''},
+    dateEvent: new Date().toISOString().substr(0, 10),
+    lieu: '',
+    description: ''
+  })
+
+const titleRules = [
+    v => !!v || 'Le titre est requis',
+    v => v.length <= 100 || 'Le titre doit contenir moins de 100 caractères'
+  ]
+
+  function submitForm() {
+  if (form.value && form.value.validate()) {
+    const newEvent = {
+      ...event.value,
+    };
+    emit('add-event', newEvent);
+  }
+  emit('close')
+}
+
+</script>
+
 <template>
   <v-card class="form-card">
     <v-card-title>
@@ -66,40 +100,6 @@
     </v-card-actions>
   </v-card>
 </template>
-
-<script setup>
-import { ref, defineProps } from "vue";
-
-const props = defineProps(["eventTypes"])
-const emit = defineEmits(['close', 'add-event']);
-
-const form = ref(null)
-const valid = ref(false)
-
-const event = ref({
-    nomEvent: '',
-    type: {libelle: ''},
-    dateEvent: new Date().toISOString().substr(0, 10),
-    lieu: '',
-    description: ''
-  })
-
-const titleRules = [
-    v => !!v || 'Le titre est requis',
-    v => v.length <= 100 || 'Le titre doit contenir moins de 100 caractères'
-  ]
-
-  function submitForm() {
-  if (form.value && form.value.validate()) {
-    const newEvent = {
-      ...event.value,
-    };
-    emit('add-event', newEvent);
-  }
-  emit('close')
-}
-
-</script>
 
 <style scoped>
 

@@ -1,3 +1,35 @@
+<script setup>
+import { defineProps, defineEmits } from "vue"
+
+const props = defineProps({
+  event: Object,
+  eventTypes: Array,
+  tags: Array,
+  isNextEvent: Boolean
+})
+
+const emit = defineEmits(['select', 'view', 'edit', 'delete', 'set-next'])
+
+function getDayNumber(date) {
+  return new Date(date).getDate()
+}
+
+function getMonthShort(date) {
+  const monthNames = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc']
+  return monthNames[new Date(date).getMonth()]
+}
+
+function getEventTypeColor(libelle) {
+  return props.tags.find(type => type.libelle === libelle)?.tag || 'default'
+}
+
+function isCurrentMonthEvent(date) {
+  const eventDate = new Date(date)
+  const now = new Date()
+  return eventDate.getMonth() === now.getMonth() && eventDate.getFullYear() === now.getFullYear()
+}
+</script>
+
 <template>
   <v-card
     class="event-card"
@@ -60,38 +92,6 @@
     </v-card-actions>
   </v-card>
 </template>
-
-<script setup>
-import { defineProps, defineEmits } from "vue"
-
-const props = defineProps({
-  event: Object,
-  eventTypes: Array,
-  tags: Array,
-  isNextEvent: Boolean
-})
-
-const emit = defineEmits(['select', 'view', 'edit', 'delete', 'set-next'])
-
-function getDayNumber(date) {
-  return new Date(date).getDate()
-}
-
-function getMonthShort(date) {
-  const monthNames = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc']
-  return monthNames[new Date(date).getMonth()]
-}
-
-function getEventTypeColor(libelle) {
-  return props.tags.find(type => type.libelle === libelle)?.tag || 'default'
-}
-
-function isCurrentMonthEvent(date) {
-  const eventDate = new Date(date)
-  const now = new Date()
-  return eventDate.getMonth() === now.getMonth() && eventDate.getFullYear() === now.getFullYear()
-}
-</script>
 
 <style scoped>
 .event-card {

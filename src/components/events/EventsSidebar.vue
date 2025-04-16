@@ -1,3 +1,20 @@
+<script setup>
+import CalendarPreview from './CalendarPreview.vue'
+import { defineProps } from "vue"
+
+const props = defineProps([
+  "activeFilters",
+  "tags",
+  "periodFilter",
+  "periodOptions",
+  "currentMonth",
+  "currentYear",
+  "calendarDays",
+  "weekdays",
+  "events"
+]);
+</script>
+
 <template>
 <div class="events-sidebar">
     <v-btn
@@ -54,23 +71,6 @@
     />
 </div>
 </template>
-
-<script setup>
-import CalendarPreview from './CalendarPreview.vue'
-import { defineProps } from "vue"
-
-const props = defineProps([
-  "activeFilters",
-  "tags",
-  "periodFilter",
-  "periodOptions",
-  "currentMonth",
-  "currentYear",
-  "calendarDays",
-  "weekdays",
-  "events"
-]);
-</script>
 
 <style scoped>
 
