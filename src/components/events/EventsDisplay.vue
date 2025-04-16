@@ -11,7 +11,7 @@
       :eventTypes="eventTypes"
       :tags="tags"
       @selectEvent="$emit('selectEvent', $event)"
-      @viewEvent="$emit('viewEvent', $event)"
+      @viewEvent="handleViewEvent"
       @editEvent="$emit('editEvent', $event)"
       @deleteEvent="$emit('deleteEvent', $event)"
     />
@@ -22,9 +22,18 @@
       :eventTypes="eventTypes"
       :tags="tags"
       @selectEvent="$emit('selectEvent', $event)"
-      @viewEvent="$emit('viewEvent', $event)"
+      @viewEvent="handleViewEvent"
       @editEvent="$emit('editEvent', $event)"
       @deleteEvent="$emit('deleteEvent', $event)"
+    />
+
+    <EventViewer
+      v-if="selectedEvent"
+      :event="selectedEvent"
+      :visible="isViewerVisible"
+      @close="closeEventViewer"
+      @editEvent="handleEditEvent"
+      @deleteEvent="handleDeleteEvent"
     />
   </div>
 </template>
@@ -33,6 +42,7 @@
 import EventsHeader from './EventsHeader.vue'
 import EventsGrid from './EventsGrid.vue'
 import EventsList from './EventsList.vue'
+import EventViewer from './EventViewer.vue'
 import {computed, defineEmits, defineProps, ref} from "vue"
 
 const props = defineProps([
@@ -43,14 +53,40 @@ const props = defineProps([
   "tags"
 ])
 
-const emit = defineEmits(['viewEvent', 'editEvent', 'deleteEvent'])
+const emit = defineEmits(['selectEvent', 'viewEvent', 'editEvent', 'deleteEvent'])
 
 const searchQuery = ref('')
 const viewMode = ref('grid')
 
+const selectedEvent = ref(null)
+const isViewerVisible = ref(false)
+
+function handleViewEvent(event) {
+  selectedEvent.value = event
+  isViewerVisible.value = true
+  emit('viewEvent', event)
+}
+
+function closeEventViewer() {
+  isViewerVisible.value = false
+  // Optionnel : on peut ajouter un délai avant de vider l'événement pour une meilleure animation
+  setTimeout(() => {
+    selectedEvent.value = null
+  }, 300)
+}
+
+// Fonctions pour gérer les actions depuis le visualiseur d'événements
+function handleEditEvent(event) {
+  closeEventViewer()
+  emit('editEvent', event)
+}
+
+function handleDeleteEvent(event) {
+  closeEventViewer()
+  emit('deleteEvent', event)
+}
 
 const filteredEvents = computed(() => {
-
   if (!searchQuery.value.trim() && props.activeFilters.length === 0 && props.periodFilter === "all") return props.events;
 
   const termeLowerCase = searchQuery.value.toLowerCase().trim();
@@ -91,17 +127,15 @@ function filterByPeriod(event) {
   }
   if (props.periodFilter === 'month') {
     return eventDate.getMonth() === today.getMonth() &&
-           eventDate.getFullYear() === today.getFullYear()
+      eventDate.getFullYear() === today.getFullYear()
   }
   return true
 }
-
 </script>
 
 <style scoped>
-
 .events-display {
   padding: 15px;
+  position: relative;
 }
-
 </style>
