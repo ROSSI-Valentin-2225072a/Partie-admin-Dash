@@ -1,71 +1,99 @@
 <template>
-    <v-card
-      class="event-card"
-      :class="`event-border-${event.type.libelle}`"
-    >
-      <div class="event-date-badge">
-        <div class="event-day">{{ getDayNumber(event.dateEvent) }}</div>
-        <div class="event-month">{{ getMonthShort(event.dateEvent) }}</div>
+  <v-card
+    class="event-card"
+    :class="[
+      `event-border-${event.type.libelle}`,
+      { 'next-event-highlight': isNextEvent }
+    ]"
+  >
+    <div class="event-date-badge">
+      <div class="event-day">{{ getDayNumber(event.dateEvent) }}</div>
+      <div class="event-month">{{ getMonthShort(event.dateEvent) }}</div>
+    </div>
+
+    <v-card-text class="event-content">
+      <div class="event-header">
+        <v-chip
+          class="event-type-badge"
+        >
+          <v-avatar start :class="`dot-${getEventTypeColor(event.type.libelle)}`"></v-avatar>
+          {{ event.type.libelle }}
+        </v-chip>
+
+        <!-- Indicateur d'événement du mois -->
+        <v-btn
+          v-if="isCurrentMonthEvent(event.dateEvent)"
+          icon
+          density="compact"
+          size="small"
+          :color="isNextEvent ? 'amber' : 'grey'"
+          :variant="isNextEvent ? 'flat' : 'text'"
+          @click="$emit('set-next', event)"
+          :title="isNextEvent ? 'Événement du mois sélectionné' : 'Définir comme événement du mois'"
+          class="ms-auto"
+        >
+          <v-icon>{{ isNextEvent ? 'mdi-star' : 'mdi-star-outline' }}</v-icon>
+        </v-btn>
       </div>
 
-      <v-card-text class="event-content">
-        <div class="event-header">
-          <v-chip
-            class="event-type-badge"
-          >
-            <v-avatar start :class="`dot-${getEventTypeColor(event.type.libelle)}`"></v-avatar>
-            {{ event.type.libelle }}
-          </v-chip>
-        </div>
+      <h3 class="event-title">{{ event.nomEvent }}</h3>
 
-        <h3 class="event-title">{{ event.nomEvent }}</h3>
+      <div class="event-location">
+        <v-icon size="small">mdi-map-marker</v-icon>
+        {{ event.lieu || "Non spécifié" }}
+      </div>
+    </v-card-text>
 
-        <div class="event-location">
-          <v-icon size="small">mdi-map-marker</v-icon>
-          {{ event.lieu || "Non spécifié" }}
-        </div>
-      </v-card-text>
-
-      <v-card-actions class="event-actions">
-        <v-btn icon @click="$emit('select', event)" class="action-btn">
-          <v-icon>mdi-check</v-icon>
-        </v-btn>
-        <v-btn icon @click="$emit('view', event)" class="action-btn">
-          <v-icon>mdi-eye</v-icon>
-        </v-btn>
-        <v-btn icon @click="$emit('edit', event)" class="action-btn">
-          <v-icon>mdi-pencil</v-icon>
-        </v-btn>
-        <v-btn icon @click="$emit('delete', event.id)" class="action-btn">
-          <v-icon>mdi-delete</v-icon>
-        </v-btn>
-      </v-card-actions>
-    </v-card>
-  </template>
+    <v-card-actions class="event-actions">
+      <v-btn icon @click="$emit('select', event)" class="action-btn">
+        <v-icon>mdi-check</v-icon>
+      </v-btn>
+      <v-btn icon @click="$emit('view', event)" class="action-btn">
+        <v-icon>mdi-eye</v-icon>
+      </v-btn>
+      <v-btn icon @click="$emit('edit', event)" class="action-btn">
+        <v-icon>mdi-pencil</v-icon>
+      </v-btn>
+      <v-btn icon @click="$emit('delete', event.id)" class="action-btn">
+        <v-icon>mdi-delete</v-icon>
+      </v-btn>
+    </v-card-actions>
+  </v-card>
+</template>
 
 <script setup>
-import { defineProps } from "vue"
+import { defineProps, defineEmits } from "vue"
 
-const props = defineProps(["event", "eventTypes", "tags"])
+const props = defineProps({
+  event: Object,
+  eventTypes: Array,
+  tags: Array,
+  isNextEvent: Boolean
+})
 
+const emit = defineEmits(['select', 'view', 'edit', 'delete', 'set-next'])
 
 function getDayNumber(date) {
-    return new Date(date).getDate()
+  return new Date(date).getDate()
 }
 
 function getMonthShort(date) {
-    const monthNames = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc']
-    return monthNames[new Date(date).getMonth()]
+  const monthNames = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc']
+  return monthNames[new Date(date).getMonth()]
 }
 
 function getEventTypeColor(libelle) {
   return props.tags.find(type => type.libelle === libelle)?.tag || 'default'
 }
 
+function isCurrentMonthEvent(date) {
+  const eventDate = new Date(date)
+  const now = new Date()
+  return eventDate.getMonth() === now.getMonth() && eventDate.getFullYear() === now.getFullYear()
+}
 </script>
 
 <style scoped>
-
 .event-card {
   display: flex;
   flex-direction: column;
@@ -84,6 +112,12 @@ function getEventTypeColor(libelle) {
 .event-card:hover {
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
   transform: translateY(-2px);
+}
+
+.next-event-highlight {
+  background-color: rgba(255, 193, 7, 0.1);
+  box-shadow: 0 2px 12px rgba(255, 193, 7, 0.2);
+  padding: 8px;
 }
 
 .event-date-badge {
@@ -177,5 +211,4 @@ function getEventTypeColor(libelle) {
   height: 15px;
   border-radius: 50%;
 }
-
 </style>
