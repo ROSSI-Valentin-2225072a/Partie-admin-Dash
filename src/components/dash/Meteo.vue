@@ -1,8 +1,11 @@
 <template>
   <div class="meteo-box" v-if="loaded">
-    <div class="meteo-time">{{ heure }}</div>
-    <div class="meteo-temp">{{ meteo.temp_c }}°C</div>
-    <div class="meteo-desc">{{ meteo.condition.text }}</div>
+    <h2 class="meteo-title">Météo</h2>
+    <div class="meteo-content">
+      <div class="meteo-time">{{ heure }}</div>
+      <div class="meteo-temp">{{ meteo.temp_c }}°C</div>
+      <div class="meteo-desc">{{ meteo.condition.text }}</div>
+    </div>
   </div>
 </template>
 
@@ -61,18 +64,50 @@ onUnmounted(() => {
 
 <style scoped>
 .meteo-box {
-  width: 280px;
-  height: 200px;
+  width: 350px;
   background-color: white;
   border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  padding: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  color: #2f2769;
+  font-weight: bold;
+}
+
+.meteo-title {
+  font-size: 2rem;
+  font-weight: 600;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 1rem;
+  text-align: center;
+  margin-bottom: 1.2rem;
+
+  background: linear-gradient(135deg, #ed6962, #ffb1b1, #d6a1f2, #9059a0);
+  background-size: 400% 400%;
+  animation: gradientBG 20s ease infinite;
+}
+
+/* Animation pour le dégradé */
+@keyframes gradientBG {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.meteo-content {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  color: #1a1a5e;
-  font-weight: bold;
-  text-align: center;
+  padding: 10px 0;
 }
 
 .meteo-time {
@@ -82,10 +117,10 @@ onUnmounted(() => {
 
 .meteo-temp {
   font-size: 26px;
+  margin-bottom: 10px;
 }
 
 .meteo-desc {
   font-size: 20px;
 }
 </style>
-

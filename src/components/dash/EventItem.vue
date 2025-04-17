@@ -49,7 +49,6 @@ function formatDate(dateToFormat) {
   background-color: white;
   border-radius: 10px;
   border-left: 4px solid #2f2769;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
   justify-content: space-between;

@@ -1,25 +1,37 @@
 <template>
   <div class="app-background">
-    <img
-      src="/logo-ISIS-horizontal-BLANC-HD.png"
-      alt="Logo ISIS"
-      class="logo"
-    />
-    <div class="quote-container">
-      <Quote />
+    <div class="left-column">
+      <div class="logo-container">
+        <img src="/logo-ISIS-horizontal-BLANC-HD.png" alt="Logo ISIS" class="logo" />
+      </div>
+
+      <div class="meteo-container">
+        <Meteo />
+      </div>
+
+      <div class="photo-container">
+        <Photo />
+      </div>
     </div>
-    <div class="meteo-container">
-      <Meteo />
+
+    <div class="center-column">
+      <div class="events-wrapper">
+        <EventBox />
+        <div class="spacer"></div>
+        <div class="month-event-container">
+          <MonthEventBox />
+        </div>
+      </div>
     </div>
-    <div class="birthday-container">
-      <Birthday />
-    </div>
-    <div class="photo-container">
-      <Photo />
-    </div>
-    <EventBox/>
-    <div class="eventmonth-container">
-      <MonthEventBox />
+
+    <div class="right-column">
+      <div class="birthday-container">
+        <Birthday />
+      </div>
+
+      <div class="quote-container">
+        <Quote />
+      </div>
     </div>
   </div>
 </template>
@@ -41,15 +53,77 @@ import MonthEventBox from "@/components/dash/MonthEventBox.vue";
   background-size: 400% 400%;
   animation: gradientBG 20s ease infinite;
   display: flex;
-  align-items: flex-start;
-  justify-content: flex-start;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+  position: relative;
+}
+
+.left-column {
+  width: 25%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
   padding: 20px;
-  overflow: hidden; /* empêche le scroll */
+}
+
+.center-column {
+  width: 50%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 20px 0;
+}
+
+.right-column {
+  width: 25%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+}
+
+.logo-container {
+  margin-bottom: 20px;
 }
 
 .logo {
-  width: 350px;
+  width: 240px;
 }
+
+.meteo-container {
+  margin-top: 50px;
+  flex-grow: 1;
+}
+
+.photo-container {
+  margin-top: auto;
+  margin-bottom: 40px;
+}
+
+.events-wrapper {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.spacer {
+  flex-grow: 1;
+}
+
+.month-event-container {
+  margin-bottom: 40px;
+}
+
+.birthday-container {
+  margin-top: 20px;
+}
+
+.quote-container {
+  margin-top: auto;
+  margin-bottom: 40px;
+}
+
 @keyframes gradientBG {
   0% {
     background-position: 0% 50%;
@@ -61,35 +135,4 @@ import MonthEventBox from "@/components/dash/MonthEventBox.vue";
     background-position: 0% 50%;
   }
 }
-
-.quote-container {
-  position: absolute;
-  bottom: 70px;
-  right: 70px;
-}
-
-.meteo-container {
-  position: absolute;
-  top: 250px;
-  left: 60px;
-}
-
-.photo-container {
-  position: absolute;
-  bottom: 40px;
-  left: 30px;
-}
-
-.birthday-container {
-  position: absolute;
-  top: 50px;
-  right: 70px;
-}
-
-.eventmonth-container {
-  position: absolute;
-  bottom: 40px;
-  left: 300px;
-}
-
 </style>

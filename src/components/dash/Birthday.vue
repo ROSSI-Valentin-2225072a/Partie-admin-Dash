@@ -100,7 +100,7 @@ onMounted(async () => {
 .birthday-title {
   font-size: 2rem;
   font-weight: 600;
-  font-family: 'Plus Jakarta Sans', sans-serif; /* Applique Jakarta Sans uniquement au titre */
+  font-family: 'Plus Jakarta Sans', sans-serif;
   color: white;
   padding: 0.5rem 1rem;
   border-radius: 1rem;
@@ -112,7 +112,6 @@ onMounted(async () => {
   animation: gradientBG 20s ease infinite;
 }
 
-/* Animation pour le dégradé */
 @keyframes gradientBG {
   0% {
     background-position: 0% 50%;
