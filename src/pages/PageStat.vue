@@ -1,14 +1,8 @@
 <template>
   <v-container fluid>
     <v-row>
-      <!-- Barre d'application avec menu -->
-      <v-app-bar app>
-        <template v-slot:prepend>
-          <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
-        </template>
-      </v-app-bar>
-      
-      <v-navigation-drawer v-model="drawer" app>
+      <!-- Menu latéral gauche -->
+      <v-navigation-drawer permanent app>
         <v-card class="pa-4" elevation="2">
           <v-list nav dense>
             <!-- Groupe "Événement" -->
@@ -42,7 +36,6 @@
               </v-list-item>
             </v-list-group>
 
-
             <!-- Groupe "Photo" -->
             <v-list-group v-model="photoOpen" prepend-icon="mdi-camera">
               <template v-slot:activator="{ props }">
@@ -73,7 +66,6 @@
                 </v-list-item-content>
               </v-list-item>
             </v-list-group>
-
 
             <!-- Groupe "Citation" -->
             <v-list-group v-model="quoteOpen" prepend-icon="mdi-format-quote-close">
@@ -109,21 +101,21 @@
         </v-card>
       </v-navigation-drawer>
 
-
       <!-- Contenu principal -->
       <v-col cols="12" md="9">
         <PageStatPhotoMost v-if="pageActive === 'photoMost'" />
         <PageStatPhotoLeast v-if="pageActive === 'photoLeast'" />
         <PageStatEventCirc v-if="pageActive === 'eventcirc'" />
         <PageStatEventBaton v-if="pageActive === 'eventbaton'" />
-        <PageStatCitation v-if="pageActive === 'citation'" />
         <PageStatQuoteMost v-if="pageActive === 'quoteMost'" />
         <PageStatQuoteLeast v-if="pageActive === 'quoteLeast'" />
       </v-col>
     </v-row>
   </v-container>
-</template>
 
+  <!-- Contenu dynamique selon la page active -->
+  <component :is="pageActive" />
+</template>
 
 <script setup>
 import { ref } from 'vue';
@@ -131,18 +123,16 @@ import PageStatPhotoMost from './PageStatPhotoMost.vue';
 import PageStatPhotoLeast from './PageStatPhotoLeast.vue';
 import PageStatEventCirc from './PageStatEventCirc.vue';
 import PageStatEventBaton from './PageStatEventBaton.vue';
-import PageStatCitation from './PageStatCitation.vue';
 import PageStatQuoteMost from './PageStatQuoteMost.vue';
 import PageStatQuoteLeast from './PageStatQuoteLeast.vue';
 
-
-const drawer = ref(false);
-const pageActive = ref(null); // Aucun élément sélectionné par défaut
+const eventOpen = ref(true); // Le groupe "Événement" est ouvert par défaut
 const photoOpen = ref(false);
-const eventOpen = ref(false);
 const quoteOpen = ref(false);
-</script>
 
+const pageActive = ref('eventcirc'); // Page "Diagramme circulaire" est active par défaut
+
+</script>
 
 <style scoped>
 .active-item {

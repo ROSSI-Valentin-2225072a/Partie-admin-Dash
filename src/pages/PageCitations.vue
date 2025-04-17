@@ -1,20 +1,37 @@
 <template>
   <v-container class="ma-5 d-flex">
     <!-- Sélecteur de mode -->
-    <v-card class="pa-4 mode-selection" elevation="5">
-      <h3 class="mode-title white--text mb-2">Mode</h3>
-      <v-radio-group v-model="mode" class="mode-group" column>
+    <v-card class="citation-mode" elevation="3">
+      <h3 class="mode-title">Mode de gestion</h3>
+      <v-radio-group
+        v-model="mode"
+        column
+        class="mode-selection"
+      >
         <v-radio
           label="Mode manuel"
           value="manuel"
-          class="mode-option"
-        ></v-radio>
+          color="#9059a0"
+        />
         <v-radio
           label="Mode automatique"
           value="auto"
-          class="mode-option"
-        ></v-radio>
+          color="#9059a0"
+        />
       </v-radio-group>
+
+      <div class="mode-info">
+        <v-icon :color="mode === 'manuel' ? '#9059a0' : '#888'" class="mode-icon">
+          {{ mode === 'manuel' ? 'mdi-hand' : 'mdi-robot' }}
+        </v-icon>
+        <p class="mode-description">
+          {{
+            mode === 'manuel'
+              ? 'Sélectionnez manuellement la citation du jour'
+              : 'Rotation automatique des citations'
+          }}
+        </p>
+      </div>
     </v-card>
 
     <v-card
@@ -414,7 +431,6 @@ watch(mode, (newMode) => {
   }
 });
 
-// Charger les citations au démarrage
 onMounted(() => {
   chargerCitations();
 });
@@ -426,28 +442,10 @@ onMounted(() => {
   gap: 20px;
 }
 
-.mode-selection {
-  background: #9059a0;
-  border-radius: 12px;
-  color: white;
-  width: 235px;
-  height: fit-content;
-  min-height: 130px;
-}
-
 .mode-title {
   font-size: 1.2rem;
   font-weight: 500;
   margin-bottom: 8px;
-}
-
-.mode-group {
-  color: white;
-}
-
-.mode-option {
-  font-weight: bold;
-  color: white !important;
 }
 
 .citation-container {
@@ -578,4 +576,45 @@ onMounted(() => {
   z-index: 10;
   pointer-events: none;
 }
+
+.citation-mode {
+  background-color: white;
+  border-radius: 16px;
+  padding: 25px;
+  height: fit-content;
+  border-left: 4px solid #9059a0;
+  transition: box-shadow 0.3s ease;
+}
+.citation-mode:hover {
+  box-shadow: 0 8px 16px rgba(144, 89, 160, 0.15) !important;
+}
+.mode-title {
+  color: #9059a0;
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #f0e6f5;
+}
+.mode-selection {
+  margin-bottom: 20px;
+}
+.mode-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 20px;
+  padding: 12px;
+  background-color: #f8f5fc;
+  border-radius: 8px;
+}
+.mode-icon {
+  font-size: 28px;
+}
+.mode-description {
+  font-size: 0.9rem;
+  color: #555;
+  margin: 0;
+}
+
 </style>

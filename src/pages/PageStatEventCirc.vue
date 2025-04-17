@@ -1,80 +1,163 @@
 <template>
-  <v-container>
-    <h2 class="text-h5 mb-4">Répartition des types d'événements</h2>
+  <div class="wrapper">
+    <!-- Conteneur du graphique -->
+    <div class="chart-container">
+      <apexchart
+        width="600"
+        height="400"
+        :options="chartOptions"
+        :series="chartSeries"
+      ></apexchart>
+    </div>
 
-    <!-- Sélecteur de période -->
-    <v-row>
-      <v-col cols="12" md="6">
-        <v-select
-          v-model="selectedPeriod"
-          :items="periods"
-          label="Choisir une période"
-        />
-      </v-col>
-    </v-row>
-
-    <!-- Affichage du graphique -->
-    <v-row>
-      <v-col cols="12" md="8">
-        <DoughnutChart :data="chartData" />
-      </v-col>
-    </v-row>
-  </v-container>
+    <!-- Sélecteur d'année à droite -->
+    <div class="year-selector">
+      <v-select
+        v-model="selectedYear"
+        :items="yearOptions"
+        label="Sélectionnez l'année"
+        outlined
+        dense
+      ></v-select>
+    </div>
+  </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
-import { Doughnut } from 'vue-chartjs'
-import {
-  Chart as ChartJS,
-  Title,
-  Tooltip,
-  Legend,
-  ArcElement,
-  CategoryScale
-} from 'chart.js'
+import { ref, computed } from 'vue';
+import apexchart from 'vue3-apexcharts';
 
-// Enregistrement des composants Chart.js nécessaires
-ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale)
+// Liste des années disponibles
+const yearOptions = [2020, 2021, 2022, 2023, 2024];
+const selectedYear = ref(2020);
 
-// Données simulées pour les événements par mois
-const eventStats = {
-  Janvier: { Pédagogique: 5, 'Vie étudiante': 3, Conférence: 2, Interne: 4 },
-  Février: { Pédagogique: 2, 'Vie étudiante': 6, Conférence: 1, Interne: 5 },
-  Mars: { Pédagogique: 8, 'Vie étudiante': 4, Conférence: 3, Interne: 7 },
-  Avril: { Pédagogique: 6, 'Vie étudiante': 5, Conférence: 2, Interne: 6 }
-}
+// Exemple de données par année pour le graphique
+const pieDataByYear = {
+  2020: [44, 13, 55, 43],
+  2021: [50, 10, 60, 35],
+  2022: [40, 20, 45, 35],
+  2023: [30, 25, 50, 45],
+  2024: [20, 30, 40, 50],
+};
 
-// Périodes disponibles pour la sélection
-const periods = ['Janvier', 'Février', 'Mars', 'Avril']
+// Libellés fixes pour chaque catégorie
+const labels = ["Vie étudiante", "Conférence", "Interne", "Pédagogique"];
 
-// La période sélectionnée
-const selectedPeriod = ref('Janvier')
+// Série du graphique qui change en fonction de l'année sélectionnée
+const chartSeries = computed(() => {
+  return pieDataByYear[selectedYear.value] || [];
+});
 
-// Computed pour récupérer les données du graphique en fonction de la période sélectionnée
-const chartData = computed(() => {
-  const data = eventStats[selectedPeriod.value]
-  return {
-    labels: Object.keys(data), // Les types d'événements
-    datasets: [
-      {
-        label: 'Événements',
-        data: Object.values(data), // Le nombre d'événements pour chaque type
-        backgroundColor: ['#FF5733', '#33FF57', '#3357FF', '#F7FF33'], // Couleurs des segments
-        hoverOffset: 4
+// Options de base du graphique
+const options = {
+  chart: {
+    type: "pie",
+    toolbar: {
+      show: true,
+      tools: {
+        zoom: true,
+        download: true,
+        fullscreen: true,
+      },
+      export: {
+        csv: {
+          filename: 'graphique-repartition-categories',
+          delimiter: ',',
+        }
       }
-    ]
-  }
-})
+    },
+    fontFamily: "'Poppins', sans-serif",
+  },
+  labels: labels,
+  colors: ["red", "blue", "yellow", "green"],
+  responsive: [{
+    breakpoint: 1000,
+    options: {
+      chart: {
+        width: "100%",
+      },
+    },
+  }],
+  title: {
+    text: "Répartition par catégorie - " + selectedYear.value,
+    align: "center",
+    style: {
+      fontSize: '20px',
+      fontWeight: '600',
+      color: '#334155',
+    }
+  },
+  tooltip: {
+    theme: 'dark',
+    style: {
+      fontSize: '12px',
+    },
+    x: {
+      show: true
+    },
+    y: {
+      formatter: function(val) {
+        return val.toFixed(0);
+      }
+    }
+  },
+};
+
+// Options réactives qui mettent à jour le titre en fonction de l'année sélectionnée
+const chartOptions = computed(() => {
+  return {
+    ...options,
+    title: {
+      ...options.title,
+      text: "Répartition par catégorie - " + selectedYear.value,
+    },
+  };
+});
 </script>
 
 <style scoped>
-/* Style optionnel pour ajuster l'apparence du graphique */
-.v-container {
-  padding: 16px;
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+/* Wrapper englobant le graphique et le sélecteur d'année */
+.wrapper {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  padding: 20px;
 }
 
-.v-row {
-  margin-top: 16px;
+/* Conteneur du graphique */
+.chart-container {
+  width: 100%;
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 20px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 600px;
+}
+
+/* Style optionnel pour arrondir les barres si d'autres graphiques sont utilisés */
+.chart-container .apexcharts-bar-series path {
+  border-radius: 10px;
+}
+
+/* Conteneur du sélecteur d'année */
+.year-selector {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+/* Largeur définie pour le v-select */
+.year-selector .v-select {
+  width: 200px;
 }
 </style>

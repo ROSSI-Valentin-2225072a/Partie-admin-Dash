@@ -1,44 +1,58 @@
 <template>
   <v-app>
-    <!-- Fond global avec éléments vectoriels (visible partout sauf sur le dashboard) -->
     <div v-if="!isDashboardPage" class="global-background">
       <img src="/Elements_Vectoriels.png" class="svg-deco top-right" alt="">
       <img src="/Elements_Vectoriels.png" class="svg-deco bottom-left" alt="">
     </div>
-    
-    <!-- Écran de démarrage (non visible sur le dashboard) -->
-    <div 
-      v-if="showSplash && !isDashboardPage" 
-      class="splash-screen" 
-      @click="handleSplashClick"
-      @keydown="handleSplashClick"
+
+    <div
+      v-if="showSplash && !isDashboardPage"
+      class="splash-screen"
       tabindex="0"
     >
       <div class="logo-container">
         <img src="/logo-ISIS-horizontal-BLANC-HD.png" alt="Logo" class="splash-logo">
       </div>
-      <div class="click-instruction">Cliquez ou appuyez sur n'importe quelle touche pour continuer</div>
+
+      <div class="password-container">
+        <v-text-field
+          v-model="password"
+          label="Mot de passe"
+          type="password"
+          variant="outlined"
+          color="white"
+          class="password-input"
+          hide-details
+          @keyup.enter="checkPassword"
+        ></v-text-field>
+        <v-btn
+          color="white"
+          class="mt-4"
+          @click="checkPassword"
+        >
+          Valider
+        </v-btn>
+        <div v-if="passwordError" class="error-message mt-2">
+          Mot de passe incorrect
+        </div>
+      </div>
+
+      <div class="click-instruction">Entrez le mot de passe pour continuer</div>
     </div>
 
-    <!-- Page dashboard sans éléments standards -->
     <template v-if="isDashboardPage">
       <RouterView />
     </template>
-    
-    <!-- Application principale (avec éléments standards) -->
+
     <template v-else-if="!showSplash">
-      <!-- Barre de navigation -->
       <v-app-bar app color="#9059a0" density="comfortable" class="menu-bar">
-        <!-- Le contenu existant de votre barre de navigation -->
-        <!-- Logo -->
         <v-img src="/logoSblanc.png" alt="Logo" max-height="40" max-width="100"></v-img>
 
         <v-spacer></v-spacer>
 
-        <!-- Boutons du menu (uniquement visibles pour desktop et mobile) -->
         <template v-for="(item, index) in visibleMenuItems" :key="item.to">
-          <v-btn 
-            :to="item.to" 
+          <v-btn
+            :to="item.to"
             :class="{ 'active-link': $route.path === item.to }"
             class="menu-btn"
           >
@@ -46,7 +60,6 @@
           </v-btn>
         </template>
 
-        <!-- Menu déroulant pour les éléments cachés -->
         <v-menu v-if="hiddenMenuItems.length" offset-y>
           <template v-slot:activator="{ props }">
             <v-btn v-bind="props" icon>
@@ -54,9 +67,9 @@
             </v-btn>
           </template>
           <v-list>
-            <v-list-item 
-              v-for="item in hiddenMenuItems" 
-              :key="item.to" 
+            <v-list-item
+              v-for="item in hiddenMenuItems"
+              :key="item.to"
               :to="item.to"
             >
               <v-list-item-title>{{ item.label }}</v-list-item-title>
@@ -64,7 +77,6 @@
           </v-list>
         </v-menu>
 
-        <!-- Menu hamburger en mode mobile -->
         <template v-if="isMobile">
           <v-btn icon @click="drawer = !drawer">
             <v-icon>mdi-menu</v-icon>
@@ -72,7 +84,6 @@
         </template>
       </v-app-bar>
 
-      <!-- Icône de la porte en haut à droite -->
       <v-btn
         id="menu-droite"
         icon
@@ -83,7 +94,6 @@
         <v-icon>{{ doorOpen ? 'mdi-door-open' : 'mdi-door' }}</v-icon>
       </v-btn>
 
-      <!-- Menu latéral mobile -->
       <v-navigation-drawer v-model="drawer" temporary>
         <v-list>
           <v-list-item v-for="item in menuItems" :key="item.to" :to="item.to">
@@ -92,14 +102,12 @@
         </v-list>
       </v-navigation-drawer>
 
-      <!-- Contenu principal -->
       <v-main>
         <v-container class="page">
           <RouterView />
         </v-container>
       </v-main>
 
-      <!-- Footer -->
       <v-footer color="#9059a0">
         <div>
           {{ new Date().getFullYear() }} — <strong>Revalox</strong>
@@ -112,6 +120,7 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted, watchEffect } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import { sha256 } from "js-sha256";
 
 const route = useRoute();
 const router = useRouter();
@@ -121,10 +130,27 @@ const isDashboardPage = computed(() => {
 });
 
 const showSplash = ref(true);
+const password = ref('');
+const passwordError = ref(false);
+const correctPassword = '5645234ea6e6e3cb737915480966c7cf80bf685ad01332bf5e194f1da84d3dc8';
 
-const handleSplashClick = () => {
-  showSplash.value = false;
-  router.push('/');
+function hash(string) {
+  return sha256(string);
+}
+
+const checkPassword = () => {
+  if (hash(password.value) === correctPassword) {
+    showSplash.value = false;
+    router.push('/');
+    passwordError.value = false;
+  } else {
+    passwordError.value = true;
+    // Effacer le mot de passe après 2 secondes
+    setTimeout(() => {
+      password.value = '';
+      passwordError.value = false;
+    }, 2000);
+  }
 };
 
 watchEffect(() => {
@@ -152,7 +178,7 @@ const toggleDoor = () => {
 };
 
 const goToDeconnect = () => {
-  window.location.href = '/PageDeconnect';
+  location.reload();
 };
 
 const updateScreenWidth = () => {
@@ -173,23 +199,6 @@ const updateScreenWidth = () => {
 onMounted(() => {
   window.addEventListener('resize', updateScreenWidth);
   updateScreenWidth();
-  
-  // Ajouter un événement global pour le clic de souris seulement si ce n'est pas le dashboard
-  if (!isDashboardPage.value) {
-    window.addEventListener('click', handleSplashClick, { once: true });
-    
-    // Ajouter un événement global pour n'importe quelle touche
-    window.addEventListener('keydown', (e) => {
-      if (showSplash.value) {
-        handleSplashClick();
-      }
-    }, { once: true });
-    
-    // Focus sur l'élément splash pour capturer les événements clavier
-    if (showSplash.value) {
-      document.querySelector('.splash-screen')?.focus();
-    }
-  }
 });
 
 onUnmounted(() => {
@@ -227,7 +236,6 @@ const isMobile = ref(false);
   justify-content: center;
   align-items: center;
   z-index: 9999;
-  cursor: pointer;
   outline: none; /* Supprime le contour de focus */
 }
 
@@ -238,6 +246,7 @@ const isMobile = ref(false);
   width: 100%;
   max-width: 800px;
   padding: 0 20px;
+  margin-bottom: 40px;
 }
 
 .splash-logo {
@@ -247,9 +256,39 @@ const isMobile = ref(false);
   animation: fadeIn 1.5s ease-in-out;
 }
 
+.password-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 300px;
+  margin-bottom: 20px;
+  animation: fadeIn 2s ease-in-out 0.5s forwards;
+}
+
+.password-input {
+  width: 100%;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+}
+
+.password-input :deep(.v-field__field) {
+  color: white !important;
+}
+
+.password-input :deep(.v-label) {
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
+.error-message {
+  color: #ff5252;
+  font-size: 0.9rem;
+  font-weight: bold;
+}
+
 .click-instruction {
   color: white;
-  margin-top: 30px;
+  margin-top: 10px;
   font-size: 1.2rem;
   opacity: 0;
   animation: fadeIn 2s ease-in-out 1s forwards;
@@ -374,7 +413,7 @@ body, .v-application {
     padding: 6px 10px;
     min-width: 90px;
   }
-  
+
   .splash-logo {
     width: 90%;
     max-width: 500px;
@@ -387,10 +426,14 @@ body, .v-application {
     padding: 5px 8px;
     min-width: 70px;
   }
-  
+
   .splash-logo {
     width: 95%;
     max-width: 400px;
+  }
+
+  .password-container {
+    max-width: 250px;
   }
 }
 
@@ -400,10 +443,14 @@ body, .v-application {
     padding: 4px 6px;
     min-width: 60px;
   }
-  
+
   .splash-logo {
     width: 100%;
     max-width: 320px;
+  }
+
+  .password-container {
+    max-width: 200px;
   }
 }
 
