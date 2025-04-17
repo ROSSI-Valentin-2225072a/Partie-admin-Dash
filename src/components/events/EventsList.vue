@@ -1,6 +1,6 @@
 <script setup>
-import { defineProps, defineEmits, computed, onMounted, watch } from "vue"
-import { useEventStore } from "@/stores/eventStore" // Importez votre store existant
+import { defineProps, defineEmits, computed } from "vue"
+import { useEventStore } from "@/stores/eventStore"
 
 const props = defineProps(["events", "eventTypes", "tags"])
 const emit = defineEmits(['selectEvent', 'viewEvent', 'editEvent', 'deleteEvent'])

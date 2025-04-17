@@ -1,52 +1,3 @@
-<template>
-  <div class="page-evenement">
-    <EventsSidebar
-      :activeFilters="activeFilters"
-      :tags="tags"
-      :periodFilter="periodFilter"
-      :periodOptions="periodOptions"
-      :currentMonth="currentMonth"
-      :currentYear="currentYear"
-      :calendarDays="calendarDays()"
-      :weekdays="weekdays"
-      :events="events"
-      @toggleFilter="toggleFilter"
-      @changePeriod="changingPeriod"
-      @prev-month="prevMonth"
-      @nextMonth="nextMonth"
-      @selectDay="selectDay"
-      @show-add-form="showAddForm = true"
-    />
-
-    <div class="events-main">
-      <EventForm
-        v-if="showAddForm"
-        :eventTypes="tags"
-        @close="showAddForm = false"
-        @add-event="addEvent"
-      />
-
-      <EventsDisplay
-        v-else
-        :events="events"
-        :eventTypes="tags"
-        :searchQuery="searchQuery"
-        :viewMode="viewMode"
-        :activeFilters="activeFilters"
-        :periodFilter="periodFilter"
-        :tags="tags"
-        @update:searchQuery="searchQuery = $event"
-        @update:viewMode="viewMode = $event"
-        @selectEvent="selectEvent"
-        @viewEvent="viewEvent"
-        @editEvent="editEvent"
-        @deleteEvent="deleteEvent"
-        @saveEvent="saveEvent"
-      />
-    </div>
-  </div>
-</template>
-
 <script setup>
 import EventsSidebar from '@/components/events/EventsSidebar.vue'
 import EventForm from '@/components/events/EventForm.vue'
@@ -185,7 +136,7 @@ function addEvent(event) {
 }
 
 function selectEvent(event) {
-  
+
 }
 
 function viewEvent(event) {
@@ -241,6 +192,55 @@ onMounted(async () => {
   await loadEvents();
 });
 </script>
+
+<template>
+  <div class="page-evenement">
+    <EventsSidebar
+      :activeFilters="activeFilters"
+      :tags="tags"
+      :periodFilter="periodFilter"
+      :periodOptions="periodOptions"
+      :currentMonth="currentMonth"
+      :currentYear="currentYear"
+      :calendarDays="calendarDays()"
+      :weekdays="weekdays"
+      :events="events"
+      @toggleFilter="toggleFilter"
+      @changePeriod="changingPeriod"
+      @prev-month="prevMonth"
+      @nextMonth="nextMonth"
+      @selectDay="selectDay"
+      @show-add-form="showAddForm = true"
+    />
+
+    <div class="events-main">
+      <EventForm
+        v-if="showAddForm"
+        :eventTypes="tags"
+        @close="showAddForm = false"
+        @add-event="addEvent"
+      />
+
+      <EventsDisplay
+        v-else
+        :events="events"
+        :eventTypes="tags"
+        :searchQuery="searchQuery"
+        :viewMode="viewMode"
+        :activeFilters="activeFilters"
+        :periodFilter="periodFilter"
+        :tags="tags"
+        @update:searchQuery="searchQuery = $event"
+        @update:viewMode="viewMode = $event"
+        @selectEvent="selectEvent"
+        @viewEvent="viewEvent"
+        @editEvent="editEvent"
+        @deleteEvent="deleteEvent"
+        @saveEvent="saveEvent"
+      />
+    </div>
+  </div>
+</template>
 
 <style scoped>
 .page-evenement {

@@ -1,12 +1,8 @@
 <script setup>
 import { defineProps, defineEmits } from "vue"
 
-const props = defineProps({
-  event: Object,
-  eventTypes: Array,
-  tags: Array,
-  isNextEvent: Boolean
-})
+const props = defineProps(['event', 'tags', 'isNextEvent'])
+
 
 const emit = defineEmits(['select', 'view', 'edit', 'delete', 'set-next'])
 
@@ -77,9 +73,6 @@ function isCurrentMonthEvent(date) {
     </v-card-text>
 
     <v-card-actions class="event-actions">
-      <v-btn icon @click="$emit('select', event)" class="action-btn">
-        <v-icon>mdi-check</v-icon>
-      </v-btn>
       <v-btn icon @click="$emit('view', event)" class="action-btn">
         <v-icon>mdi-eye</v-icon>
       </v-btn>

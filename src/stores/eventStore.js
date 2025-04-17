@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
-export const useEventStore = defineStore('photo', () => {
+export const useEventStore = defineStore('event', () => {
   const nextEvent = ref(null)
 
   function setNextEvent(event) {

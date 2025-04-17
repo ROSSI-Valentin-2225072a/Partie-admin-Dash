@@ -45,8 +45,8 @@ onMounted(() => {
         <EventItem :currentEvent="evenement"/>
       </v-col>
     </v-row>
-    </div>
-    </div>
+  </div>
+</div>
 </template>
 
 <style scoped>

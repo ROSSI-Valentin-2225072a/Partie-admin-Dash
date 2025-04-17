@@ -5,15 +5,9 @@
 </template>
 
 <script setup>
-import { onMounted } from "vue"
 import { usePhotoStore } from "@/stores/photoStore";
 
 const photoStore = usePhotoStore()
-
-onMounted(() => {
-  console.log(photoStore.nextPhoto);
-})
-//
 
 </script>
 

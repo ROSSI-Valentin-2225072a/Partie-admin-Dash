@@ -1,18 +1,29 @@
+<script setup>
+
+import { useEventStore } from "@/stores/eventStore";
+import EventItem from "@/components/dash/EventItem.vue";
+import {onMounted} from "vue";
+
+const eventStore = useEventStore()
+
+onMounted(() => {
+  console.log(eventStore.nextEvent)
+})
+</script>
+
 <template>
   <div class="eventmonth-container">
     <h2 class="eventmonth-title">Événement du mois</h2>
-    <span class="eventmonth-text">Événement du mois à venir</span>
+    <EventItem :currentEvent = "eventStore.nextEvent" />
   </div>
 </template>
-
-<script setup></script>
 
 <style scoped>
 
 .eventmonth-title {
   font-size: 2rem;
   font-weight: 600;
-  font-family: 'Plus Jakarta Sans', sans-serif; /* Applique Jakarta Sans uniquement au titre */
+  font-family: 'Plus Jakarta Sans', sans-serif;
   color: white;
   padding: 0.5rem 1rem;
   border-radius: 1rem;
@@ -31,11 +42,5 @@
   justify-content: center;
 }
 
-.eventmonth-text {
-  color: #333;
-  font-size: 1rem;
-  font-weight: bold;
-  opacity: 0.7;
-}
 </style>
 

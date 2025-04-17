@@ -1,6 +1,6 @@
 <script setup>
 import EventCard from './EventCard.vue'
-import { defineProps, defineEmits, computed, onMounted, watch } from "vue"
+import { defineProps, defineEmits, computed } from "vue"
 import { useEventStore } from '@/stores/eventStore'
 
 const props = defineProps(["events", "eventTypes", "tags"])
@@ -8,15 +8,12 @@ const emit = defineEmits(['selectEvent', 'viewEvent', 'editEvent', 'deleteEvent'
 
 const eventStore = useEventStore();
 
-// Récupérer l'événement sélectionné comme prochain du store
 const selectedNextEvent = computed(() => eventStore.nextEvent)
 
-// Vérifier si un événement est sélectionné comme prochain
 function isSelectedAsNext(event) {
   return selectedNextEvent.value && selectedNextEvent.value.id === event.id
 }
 
-// Définir un événement comme l'événement du mois
 function setAsNextEvent(event) {
   const dateEvent = new Date(event.dateEvent)
 
@@ -31,35 +28,19 @@ function setAsNextEvent(event) {
   }
 }
 
-// Effacer l'événement du mois
 function clearNextEvent() {
   eventStore.setNextEvent(null)
 }
 
-// Formatage de date
 function formatDateShort(date) {
   const d = new Date(date)
   return `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`
 }
 
-// Récupérer la couleur du type d'événement
 function getEventTypeColor(libelle) {
   return props.tags.find(type => type.libelle === libelle)?.tag || 'default'
 }
 
-// Rechercher et définir automatiquement l'événement du mois au montage
-onMounted(() => {
-  // Si aucun événement n'est déjà défini, on en cherche un
-  if (!selectedNextEvent.value) {
-    const currentMonthEvents = findCurrentMonthEvents();
-    if (currentMonthEvents.length > 0) {
-      // Sélectionner le premier événement du mois
-      eventStore.setNextEvent(currentMonthEvents[0]);
-    }
-  }
-});
-
-// Trouver tous les événements du mois en cours
 function findCurrentMonthEvents() {
   if (!props.events || props.events.length === 0) return [];
 
@@ -67,13 +48,11 @@ function findCurrentMonthEvents() {
   const currentMonth = now.getMonth();
   const currentYear = now.getFullYear();
 
-  // Filtrer les événements du mois actuel
   const monthEvents = props.events.filter(event => {
     const eventDate = new Date(event.dateEvent);
     return eventDate.getMonth() === currentMonth && eventDate.getFullYear() === currentYear;
   });
 
-  // Trier par date
   return monthEvents.sort((a, b) => new Date(a.dateEvent) - new Date(b.dateEvent));
 }
 </script>
@@ -108,7 +87,6 @@ function findCurrentMonthEvents() {
       </v-card>
     </div>
 
-    <!-- Grille d'événements -->
     <v-row class="events-grid">
       <v-col
         v-for="event in events"
