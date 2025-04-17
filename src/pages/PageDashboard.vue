@@ -16,6 +16,9 @@
 
     <div class="center-column">
       <div class="events-wrapper">
+        <div class="month-events-title">
+          <h2>Événements à venir</h2>
+        </div>
         <EventBox />
         <div class="spacer"></div>
         <div class="month-event-container">
@@ -113,6 +116,32 @@ import MonthEventBox from "@/components/dash/MonthEventBox.vue";
 
 .month-event-container {
   margin-bottom: 40px;
+}
+
+.month-events-title {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.month-events-title h2 {
+  color: white;
+  font-size: 1.8rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 600;
+  margin: 0;
+  padding: 10px 20px;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 15px;
+  backdrop-filter: blur(5px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  display: inline-block;
+  transition: all 0.3s ease;
+}
+
+.month-event-title h2:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
 }
 
 .birthday-container {

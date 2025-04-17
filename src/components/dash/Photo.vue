@@ -63,7 +63,7 @@ onMounted(() => {
 
 .photo-container {
   width: 280px;
-  height: 140px;
+  height: 220px;
   margin: 0 auto;
   border-radius: 8px;
   overflow: hidden;

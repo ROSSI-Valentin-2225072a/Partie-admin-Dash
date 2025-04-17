@@ -149,7 +149,7 @@ onMounted(async () => {
 }
 
 .birthday-message {
-  font-size: 0.9rem;
+  font-size: 1.2rem;
   line-height: 1.4;
 }
 
